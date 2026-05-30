@@ -1,7 +1,7 @@
 ---
 name: Alessandro Catinello
 alumni: true
-category: "Alumni"
+category: Past Visitors
 role: MSc 2024-2025, BSc 2024
 affiliation: University of Catania
 link: '#'

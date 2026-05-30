@@ -8,7 +8,7 @@ const team = defineCollection({
     role: z.string(),
     affiliation: z.string(),
     link: z.string().default('#'),
-    category: z.enum(['Principal Investigator', 'PhD Students', 'Bachelor Students', 'Collaborators', 'Past Visitors', 'Alumni']),
+    category: z.enum(['Principal Investigator', 'PhD Students', 'Bachelor Students', 'Collaborators', 'Past Visitors']),
     color: z.string().default('#1b285c'),
     image: z.string().optional(),
     profile: z.string().optional(),
