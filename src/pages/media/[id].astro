@@ -54,6 +54,7 @@ const cardSlug = card.id;
       <a href="/engagement" class="back-link">
         <ArrowLeft size={16} /> Back to Public Engagement
       </a>
+
     </div>
 
     <!-- ═══════════════════════════════════════════
@@ -99,8 +100,12 @@ const cardSlug = card.id;
           {unict_logo && <img src={unict_logo} alt="University of Catania" class="hdr-logo unict" />}
           {iplab_logo && <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />}
           <div class="logo-vsep"></div>
-          <div class="co-ai-logo" aria-label="Co-AI">
-            <span class="logo-co">Co</span><span class="logo-dash">-</span><span class="logo-a">A</span><span class="logo-i">I</span>
+          <div class="co-ai-logo" aria-label="Co-AI" style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;">
+            <span style="color:#1b285c">C</span>
+            <span style="color:#2a9d8f">o</span>
+            <span style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block">-</span>
+            <span style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block">A</span>
+            <span style="color:#f4a24c;margin-left:2px">I</span>
           </div>
         </div>
       </div>
@@ -232,41 +237,8 @@ const cardSlug = card.id;
   </div>
 </Layout>
 
-<!-- Download script using html-to-image (ES module from CDN) -->
-<script type="module">
-  import { toPng } from 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm';
 
-  const btn = document.getElementById('download-btn');
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      const card = document.getElementById('share-card');
-      if (!card) return;
-
-      const slug = btn.dataset.slug ?? 'co-ai-card';
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '⏳ Generating…';
-      btn.disabled = true;
-
-      try {
-        const dataUrl = await toPng(card, {
-          pixelRatio: 3,
-          backgroundColor: '#ffffff',
-          style: { borderRadius: '0' }, // avoids clipping in some browsers
-        });
-        const link = document.createElement('a');
-        link.download = `co-ai-${slug}.png`;
-        link.href = dataUrl;
-        link.click();
-      } catch (err) {
-        console.error('PNG export failed:', err);
-        alert('Export failed — see browser console for details.');
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }
-    });
-  }
-</script>
+</style>
 
 <style>
   /* ── Page wrapper ── */
@@ -321,7 +293,8 @@ const cardSlug = card.id;
     background: #fff;
     border-radius: 28px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-    padding: 2rem 1.75rem 1.25rem;
+    max-width: 650px;
+    padding: 2rem 2.2rem 1.5rem;
     overflow: hidden;
     font-family: 'Nunito', sans-serif;
   }
