@@ -1,0 +1,3 @@
+// html-to-image for Astro/React (ESM CDN)
+// This is only used in the browser for card export, not SSR.
+// No npm install needed unless you want local dev fallback.
