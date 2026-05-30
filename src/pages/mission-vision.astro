@@ -21,24 +21,24 @@ const mvData = mvEntry ? mvEntry.data : {
 <Layout title={`Co-AI Research Group | ${mvData.title}`}>
   <div class="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl">
     {/* Page Header */}
-    <header class="border-b border-gray-200 pb-8">
-      <h2 class="text-5xl font-[900] text-gray-900 mb-4 tracking-tight">{mvData.title}</h2>
-      <p class="text-xl text-gray-600 font-[600] leading-relaxed">
+    <header class="max-w-4xl border-b border-gray-200 dark:border-gray-800 pb-8">
+      <h2 class="text-5xl font-[900] text-gray-900 dark:text-white mb-4 tracking-tight">{mvData.title}</h2>
+      <p class="text-xl text-gray-600 dark:text-gray-300 font-[600] leading-relaxed">
         {mvData.subtitle}
       </p>
     </header>
 
     {/* Who We Are */}
-    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+    <section class="bg-white dark:bg-gray-900 p-8 md:p-10 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-8 items-start">
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.purple}15; color: ${COLORS.purple};`}>
         <Users size={26} />
       </div>
       <div class="space-y-6">
-        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Who we are</h3>
-        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.whoWeAre}>
+        <h3 class="text-3xl font-[900] text-gray-900 dark:text-white tracking-tight">Who we are</h3>
+        <p class="text-gray-600 dark:text-gray-350 font-[600] leading-relaxed text-lg" set:html={mvData.whoWeAre}>
         </p>
         <div class="pt-2">
-          <a href="/team" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+          <a href="/team" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
             Meet the Team Members &rarr;
           </a>
         </div>
@@ -46,28 +46,28 @@ const mvData = mvEntry ? mvEntry.data : {
     </section>
 
     {/* Vision */}
-    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+    <section class="bg-white dark:bg-gray-900 p-8 md:p-10 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-8 items-start">
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.navy}15; color: ${COLORS.navy};`}>
         <Eye size={26} />
       </div>
       <div class="space-y-4">
-        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Vision</h3>
-        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.visionMain}>
+        <h3 class="text-3xl font-[900] text-gray-900 dark:text-white tracking-tight">Vision</h3>
+        <p class="text-gray-600 dark:text-gray-350 font-[600] leading-relaxed text-lg" set:html={mvData.visionMain}>
         </p>
       </div>
     </section>
 
     {/* Research */}
-    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+    <section class="bg-white dark:bg-gray-900 p-8 md:p-10 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col md:flex-row gap-8 items-start">
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
         <Brain size={26} />
       </div>
       <div class="space-y-6">
-        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Research</h3>
-        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.visionResearch}>
+        <h3 class="text-3xl font-[900] text-gray-900 dark:text-white tracking-tight">Research</h3>
+        <p class="text-gray-600 dark:text-gray-350 font-[600] leading-relaxed text-lg" set:html={mvData.visionResearch}>
         </p>
         <div class="pt-2">
-          <a href="/research" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+          <a href="/research" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
             Explore Our Research &rarr;
           </a>
         </div>

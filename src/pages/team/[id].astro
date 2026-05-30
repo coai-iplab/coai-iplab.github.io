@@ -87,34 +87,34 @@ const getTeaserUrl = (teaser?: string) => {
 <Layout title={`Co-AI Research Group | ${member.data.name}`}>
   <div class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl">
     {/* Member Details Hero */}
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative">
+    <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden relative">
       <div class="h-48 w-full" style={`background: linear-gradient(135deg, ${member.data.color}, ${COLORS.teal});`}></div>
       <div class="px-8 pb-8">
         <div class="relative flex flex-col sm:flex-row justify-between items-start sm:items-end -mt-20 mb-6 gap-4">
-          <div class="w-36 h-36 bg-white rounded-3xl p-1.5 shadow-lg flex-shrink-0">
+          <div class="w-36 h-36 bg-white dark:bg-gray-850 rounded-3xl p-1.5 shadow-lg flex-shrink-0">
             <img 
               src={member.data.profile || member.data.image || getAvatar(member.data.name, member.data.color)} 
               alt={member.data.name} 
-              class="w-full h-full rounded-2xl object-cover bg-gray-50"
+              class="w-full h-full rounded-2xl object-cover bg-gray-50 dark:bg-gray-800"
             />
           </div>
           <div class="flex-grow">
             <h1 class="text-4xl font-[900] text-white tracking-tight leading-none mb-2">{member.data.name}</h1>
             <p class="font-[900] text-lg uppercase tracking-wider mb-2" style={`color: ${member.data.color};`}>{member.data.role}</p>
-            <div class="flex items-center text-gray-500 text-sm font-[800]">
+            <div class="flex items-center text-gray-500 dark:text-gray-400 text-sm font-[800]">
               <GraduationCap size={18} class="mr-2" /> {member.data.affiliation}
             </div>
           </div>
           {member.data.link !== '#' && (
-            <a href={member.data.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-3 bg-blue-50 text-blue-600 hover:bg-blue-800 rounded-2xl font-[900] transition-colors gap-2 self-stretch sm:self-auto justify-center">
+            <a href={member.data.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-colors gap-2 self-stretch sm:self-auto justify-center">
               Personal Site <ExternalLink size={18} />
             </a>
           )}
         </div>
 
-        <div class="prose prose-zinc max-w-none border-t border-gray-100 pt-6">
-          <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest mb-4">About</h3>
-          <p class="text-gray-700 leading-relaxed text-lg font-[600] whitespace-pre-line">
+        <div class="prose prose-zinc dark:prose-invert max-w-none border-t border-gray-100 dark:border-gray-800 pt-6">
+          <h3 class="text-xs font-[900] text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">About</h3>
+          <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg font-[600] whitespace-pre-line">
             {member.body}
           </p>
         </div>
@@ -124,16 +124,16 @@ const getTeaserUrl = (teaser?: string) => {
     {/* Publications Section */}
     {memberPublications.length > 0 && (
       <div class="space-y-6">
-        <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest px-2 border-l-4 border-gray-400">Publications</h3>
+        <h3 class="text-xs font-[900] text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 border-l-4 border-gray-400 dark:border-gray-500">Publications</h3>
         <div class="space-y-4">
           {memberPublications.map((pub) => {
             const primaryLink = getPrimaryLink(pub);
             const teaserUrl = getTeaserUrl(pub.data.teaser);
             
             return (
-              <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col md:flex-row gap-6 items-center">
+              <div class="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow group flex flex-col md:flex-row gap-6 items-center">
                 {teaserUrl ? (
-                  <div class="flex-shrink-0 w-full md:w-48 h-28 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center p-2">
+                  <div class="flex-shrink-0 w-full md:w-48 h-28 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-800 flex items-center justify-center p-2">
                     <img src={teaserUrl} alt={pub.data.title} class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                   </div>
                 ) : (
@@ -146,23 +146,23 @@ const getTeaserUrl = (teaser?: string) => {
                     <span class="text-[10px] font-[900] px-3 py-1 rounded-full uppercase tracking-wider" style={`background-color: ${pub.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal}15; color: ${pub.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal};`}>
                       {pub.data.pub_type}
                     </span>
-                    <span class="text-[10px] font-[900] px-2 py-1 rounded-full bg-gray-100 text-gray-500 font-mono">
+                    <span class="text-[10px] font-[900] px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono">
                       {pub.data.year}
                     </span>
                     {pub.data.award && pub.data.award.split(';').map(aw => (
-                      <span class="text-[10px] font-[900] px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider flex items-center gap-1">
+                      <span class="text-[10px] font-[900] px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30 uppercase tracking-wider flex items-center gap-1">
                         🏆 {aw.trim()}
                       </span>
                     ))}
                   </div>
-                  <a href={`/research/${pub.id}`} class="text-lg md:text-xl font-[900] text-gray-900 group-hover:text-blue-700 transition-colors block mb-2 leading-tight">
+                  <a href={`/research/${pub.id}`} class="text-lg md:text-xl font-[900] text-gray-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors block mb-2 leading-tight">
                     {pub.data.title}
                   </a>
-                  <p class="text-gray-700 font-[800] text-sm mb-1">
+                  <p class="text-gray-700 dark:text-gray-300 font-[800] text-sm mb-1">
                     {renderAuthors(pub.data.authors).map((author, index, arr) => (
                       <span>
                         {author.isLab ? (
-                          <a href={`/team/${author.id}`} class="underline decoration-gray-400 underline-offset-4 font-[800] hover:text-blue-700 transition-colors">
+                          <a href={`/team/${author.id}`} class="underline decoration-gray-400 dark:decoration-gray-650 underline-offset-4 font-[800] hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
                             {author.name}
                           </a>
                         ) : (
@@ -172,13 +172,13 @@ const getTeaserUrl = (teaser?: string) => {
                       </span>
                     ))}
                   </p>
-                  <p class="text-gray-500 text-xs italic font-[600] mb-3">{pub.data.venue}</p>
+                  <p class="text-gray-500 dark:text-gray-400 text-xs italic font-[600] mb-3">{pub.data.venue}</p>
                   
                   <div class="flex flex-wrap gap-2 items-center">
                     {pub.data.links && pub.data.links.length > 0 && (
                       <div class="flex flex-wrap gap-2">
                         {pub.data.links.map(l => (
-                          <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-[10px] font-[900] text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg transition-colors">
+                          <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-[10px] font-[900] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-2.5 py-1 rounded-lg transition-colors">
                             {l.label} <ExternalLink size={10} class="ml-1" />
                           </a>
                         ))}
@@ -188,24 +188,24 @@ const getTeaserUrl = (teaser?: string) => {
                       <>
                         <button 
                           onclick={`document.getElementById('bibtex-dialog-${pub.id}').showModal()`}
-                          class="inline-flex items-center text-[10px] font-[900] text-teal-600 hover:text-teal-800 bg-teal-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                          class="inline-flex items-center text-[10px] font-[900] text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/40 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
                         >
                           BibTeX
                         </button>
                         <dialog 
                           id={`bibtex-dialog-${pub.id}`}
-                          class="rounded-3xl border border-gray-100 p-0 shadow-2xl max-w-2xl w-full backdrop:bg-black/50 overflow-hidden mx-auto my-auto fixed inset-0"
+                          class="rounded-3xl border border-gray-100 dark:border-gray-800 p-0 shadow-2xl max-w-2xl w-full backdrop:bg-black/50 overflow-hidden mx-auto my-auto fixed inset-0 bg-white dark:bg-gray-900"
                           onclick="event.target === this && this.close()"
                         >
-                          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-                            <span class="text-xs font-[900] uppercase tracking-widest text-gray-400">BibTeX Citation</span>
-                            <button onclick="this.closest('dialog').close()" class="text-gray-400 hover:text-gray-900 transition-colors text-2xl font-[900] cursor-pointer">&times;</button>
+                          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+                            <span class="text-xs font-[900] uppercase tracking-widest text-gray-400 dark:text-gray-500">BibTeX Citation</span>
+                            <button onclick="this.closest('dialog').close()" class="text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors text-2xl font-[900] cursor-pointer">&times;</button>
                           </div>
-                          <pre class="p-6 text-xs font-mono text-gray-700 bg-gray-50 overflow-x-auto whitespace-pre leading-relaxed">{pub.data.bibtex}</pre>
-                          <div class="px-6 py-4 border-t border-gray-100 bg-white flex justify-end">
+                          <pre class="p-6 text-xs font-mono text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-950 overflow-x-auto whitespace-pre leading-relaxed">{pub.data.bibtex}</pre>
+                          <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex justify-end">
                             <button 
                               onclick="navigator.clipboard.writeText(this.closest('dialog').querySelector('pre').textContent); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 1500)"
-                              class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl font-[900] text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                              class="px-4 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-450 rounded-xl font-[900] text-xs uppercase tracking-wider transition-colors cursor-pointer"
                             >
                               Copy
                             </button>
@@ -219,24 +219,24 @@ const getTeaserUrl = (teaser?: string) => {
                     const relatedEntry = allPublications.find(p => p.id.toLowerCase() === pub.data.related.toLowerCase());
                     if (!relatedEntry) return null;
                     return (
-                      <div class="mt-4 p-3 bg-gray-50/75 border border-gray-100 rounded-2xl flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
+                      <div class="mt-4 p-3 bg-gray-50/75 dark:bg-gray-950/40 border border-gray-100 dark:border-gray-800 rounded-2xl flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
                         <div class="space-y-1">
                           <div class="flex items-center gap-1.5">
                             <span class="text-[8px] font-[900] px-2 py-0.5 rounded-full uppercase tracking-wider font-mono" style={`background-color: ${relatedEntry.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal}15; color: ${relatedEntry.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal};`}>
                               {relatedEntry.data.pub_type === 'journal' ? 'Journal Version' : 'Conference Version'}
                             </span>
-                            <span class="text-[9px] font-[900] px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500 font-mono">
+                            <span class="text-[9px] font-[900] px-1.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-mono">
                               {relatedEntry.data.year}
                             </span>
                           </div>
-                          <a href={`/research/${relatedEntry.id}`} class="text-xs font-[900] text-gray-800 hover:text-blue-700 transition-colors block leading-snug">
+                          <a href={`/research/${relatedEntry.id}`} class="text-xs font-[900] text-gray-800 dark:text-gray-200 hover:text-blue-700 dark:hover:text-blue-400 transition-colors block leading-snug">
                             {relatedEntry.data.title}
                           </a>
                         </div>
                         {relatedEntry.data.links && relatedEntry.data.links.length > 0 && (
                           <div class="flex flex-wrap gap-1.5 flex-shrink-0">
                             {relatedEntry.data.links.map(l => (
-                              <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-[9px] font-[900] text-blue-600 hover:text-blue-800 bg-blue-50/70 px-2 py-0.5 rounded-lg transition-colors">
+                              <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-[9px] font-[900] text-blue-600 dark:text-blue-400 bg-blue-50/70 dark:bg-blue-950/30 px-2 py-0.5 rounded-lg transition-colors">
                                 {l.label} <ExternalLink size={8} class="ml-0.5" />
                               </a>
                             ))}
@@ -256,24 +256,24 @@ const getTeaserUrl = (teaser?: string) => {
     {/* Talks Section */}
     {memberTalks.length > 0 && (
       <div class="space-y-6">
-        <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest px-2 border-l-4 border-gray-400">Talks & Presentations</h3>
+        <h3 class="text-xs font-[900] text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 border-l-4 border-gray-400 dark:border-gray-500">Talks & Presentations</h3>
         <div class="space-y-4">
           {memberTalks.map((talk) => (
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow">
-              <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gray-50 text-gray-500 border border-gray-100">
+            <div class="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow">
+              <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gray-50 dark:bg-gray-850 text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-800">
                 <Presentation size={24} />
               </div>
               <div class="flex-grow">
                 <div class="flex items-center gap-3 mb-1">
-                  <span class="text-xs font-[900] text-gray-400 font-mono">{talk.data.date}</span>
+                  <span class="text-xs font-[900] text-gray-400 dark:text-gray-500 font-mono">{talk.data.date}</span>
                   <span class="px-2.5 py-0.5 rounded-full text-[10px] font-[800] uppercase tracking-wider" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
                     {talk.data.type}
                   </span>
                 </div>
-                <h4 class="text-lg font-[900] text-gray-900 mb-1">{talk.data.title}</h4>
-                <p class="text-gray-600 font-[700] text-sm mb-3">{talk.data.venue}</p>
+                <h4 class="text-lg font-[900] text-gray-900 dark:text-white mb-1">{talk.data.title}</h4>
+                <p class="text-gray-600 dark:text-gray-300 font-[700] text-sm mb-3">{talk.data.venue}</p>
                 {talk.data.slides && talk.data.slides !== "visapp2019" && (
-                  <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs font-[900] text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
+                  <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs font-[900] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1.5 rounded-lg transition-colors">
                     Slides <ExternalLink size={12} class="ml-1" />
                   </a>
                 )}
