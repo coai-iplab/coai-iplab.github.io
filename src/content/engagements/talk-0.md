@@ -9,7 +9,7 @@ speaker: "Antonino Furnari"
 speakerId: "antonino_furnari"
 mediaCard: "cvpr2026"
 ---
-Presented as Invited Talk at the [VITA Workshop](https://vita-workshop.github.io/).
+Invited Talk at the [VITA Workshop](https://vita-workshop.github.io/).
 
 - **Time**: 17:00 – 17:30
 - **Location**: Room 108

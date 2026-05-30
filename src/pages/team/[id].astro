@@ -63,7 +63,10 @@ const renderAuthors = (authorsStr: string) => {
 
 // Fetch talks and filter by speakerId
 const allTalks = await getCollection('engagements');
-const memberTalks = allTalks.filter(talk => talk.data.speakerId === member.id);
+const memberTalks = allTalks.filter(talk => {
+  const ids = Array.isArray(talk.data.speakerId) ? talk.data.speakerId : [talk.data.speakerId];
+  return ids.includes(member.id);
+});
 
 const getAvatar = (seed: string, colorHex: string) => `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${colorHex.replace('#', '')}`;
 

@@ -1,12 +1,12 @@
 ---
-date: "2026-06-03"
+date: "3-7 June 2026"
 title: "ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos"
 venue: "CVPR 2026 Workshops & Main Conference"
 type: "Oral & Poster Presentations"
 slides: ""
 upcoming: true
-speaker: "Luigi Seminara & Antonino Furnari"
-speakerId: "luigi_seminara"
+speaker: ["Luigi Seminara", "Antonino Furnari"]
+speakerId: ["luigi_seminara", "antonino_furnari"]
 mediaCard: "cvpr2026"
 ---
 Here is our presentation schedule for **ViterbiPlanNet** at CVPR 2026:

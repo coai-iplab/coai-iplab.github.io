@@ -36,91 +36,133 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
 
     {upcomingTalks.length > 0 && (
       <div class="space-y-6">
-        <h3 class="text-xs font-[900] text-red-500 uppercase tracking-widest px-2 border-l-4 border-red-500">Upcoming Talks</h3>
-        {upcomingTalks.map(({ talk, Content }) => (
-          <div class="bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-950/10 dark:to-orange-950/10 p-8 rounded-3xl border-2 border-red-100 dark:border-red-900/30 shadow-md hover:shadow-lg transition-all duration-300 relative overflow-hidden group">
-            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-[900] uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl">
-              Upcoming
-            </div>
-            <div class="flex flex-col sm:flex-row gap-6">
-              <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center bg-red-500 text-white shadow-md">
-                <Calendar size={28} />
-              </div>
-              <div class="flex-grow">
-                <div class="flex items-center gap-3 mb-2">
-                  <span class="text-sm font-[900] text-red-600 dark:text-red-400 font-mono">{talk.data.date}</span>
-                  <span class="px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
-                    {talk.data.type}
-                  </span>
-                </div>
-                <h3 class="text-2xl md:text-3xl font-[900] text-gray-900 dark:text-white mb-2 leading-tight">{talk.data.title}</h3>
-                <p class="text-gray-700 dark:text-gray-300 font-[800] text-lg mb-2">{talk.data.venue}</p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
-                  Speaker: <a href={`/team/${talk.data.speakerId}`} class="text-red-600 dark:text-red-400 hover:underline font-[800]">{talk.data.speaker}</a>
-                </p>
-                
-                {/* Talk Body Content */}
-                <div class="text-gray-600 dark:text-gray-400 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
-                  <Content />
-                </div>
+        <h3 class="text-xs font-[900] uppercase tracking-widest px-2 border-l-4" style="color: #e86f38; border-color: #e86f38;">Upcoming Events</h3>
+        {upcomingTalks.map(({ talk, Content }) => {
+          const speakers = Array.isArray(talk.data.speaker) ? talk.data.speaker : [talk.data.speaker];
+          const speakerIds = Array.isArray(talk.data.speakerId) ? talk.data.speakerId : [talk.data.speakerId];
+          const speakerList = speakers.map((name, idx) => ({
+            name,
+            id: speakerIds[idx] || speakerIds[0]
+          }));
 
-                <div class="flex flex-wrap gap-2">
-                  {talk.data.slides && (
-                    <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-[900] text-red-600 dark:text-red-450 bg-red-100/50 dark:bg-red-950/40 px-4 py-2 rounded-xl transition-colors">
-                      Slides <ExternalLink size={16} class="ml-2" />
-                    </a>
-                  )}
-                  {talk.data.mediaCard && (
-                    <a href={`/media/${talk.data.mediaCard}`} class="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-[800] text-xs uppercase tracking-wider hover:bg-blue-100 transition-colors" target="_blank" rel="noopener noreferrer">
-                      See All CVPR 2026 Research Highlight
-                    </a>
-                  )}
+          return (
+            <div class="bg-gradient-to-br from-red-50/30 to-orange-50/30 dark:from-red-950/10 dark:to-orange-950/10 p-8 rounded-3xl border border-red-100 dark:border-red-900/20 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+              <div class="absolute top-0 right-0 text-white text-[10px] font-[900] uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl" style="background-color: #e86f38;">
+                Upcoming
+              </div>
+              <div class="flex flex-col sm:flex-row gap-6">
+                <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-md" style="background-color: #e86f38;">
+                  <Calendar size={28} />
+                </div>
+                <div class="flex-grow">
+                  <div class="flex items-center gap-3 mb-2">
+                    <span class="text-sm font-[900] font-mono" style="color: #e86f38;">{talk.data.date}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider" style="background-color: #e86f3815; color: #e86f38;">
+                      {talk.data.type}
+                    </span>
+                  </div>
+                  <h3 class="text-2xl md:text-3xl font-[900] text-gray-900 dark:text-white mb-2 leading-tight">{talk.data.title}</h3>
+                  <p class="text-gray-700 dark:text-gray-300 font-[800] text-lg mb-2">{talk.data.venue}</p>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
+                    {speakerList.map((sp, idx) => (
+                      <span>
+                        <a href={`/team/${sp.id}`} class="hover:underline font-[800]" style="color: #e86f38;">{sp.name}</a>
+                        {idx < speakerList.length - 1 ? ' & ' : ''}
+                      </span>
+                    ))}
+                  </p>
+                  
+                  {/* Talk Body Content */}
+                  <div class="text-gray-600 dark:text-gray-400 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
+                    <Content />
+                  </div>
+
+                  <div class="flex flex-wrap gap-2">
+                    {talk.data.slides && (
+                      <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-[900] px-4 py-2 rounded-xl transition-colors" style="color: #e86f38; background-color: #e86f3815;">
+                        Slides <ExternalLink size={16} class="ml-2" />
+                      </a>
+                    )}
+                    {talk.data.mediaCard && (
+                      <a href={`/media/${talk.data.mediaCard}`} class="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-[800] text-xs uppercase tracking-wider hover:bg-blue-100 transition-colors" target="_blank" rel="noopener noreferrer">
+                        See All CVPR 2026 Research Highlight
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     )}
 
     <div class="space-y-6 pt-6">
       <h3 class="text-xs font-[900] text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 border-l-4 border-gray-400 dark:border-gray-500">Past Talks</h3>
-      {pastTalks.map(({ talk, Content }) => (
-        <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow">
-          <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50 dark:bg-gray-850 text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-800">
-            <Presentation size={28} />
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-3 mb-2">
-              <span class="text-sm font-[900] text-gray-400 dark:text-gray-500 font-mono">{talk.data.date}</span>
-              <span class="px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
-                {talk.data.type}
-              </span>
-            </div>
-            <h3 class="text-2xl font-[900] text-gray-900 dark:text-white mb-2">{talk.data.title}</h3>
-            <p class="text-gray-600 dark:text-gray-300 font-[700] mb-2">{talk.data.venue}</p>
-            <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
-              Speaker: <a href={`/team/${talk.data.speakerId}`} class="text-blue-600 dark:text-blue-455 hover:underline font-[800]">{talk.data.speaker}</a>
-            </p>
+      {pastTalks.map(({ talk, Content }) => {
+        const speakers = Array.isArray(talk.data.speaker) ? talk.data.speaker : [talk.data.speaker];
+        const speakerIds = Array.isArray(talk.data.speakerId) ? talk.data.speakerId : [talk.data.speakerId];
+        const speakerList = speakers.map((name, idx) => ({
+          name,
+          id: speakerIds[idx] || speakerIds[0]
+        }));
 
-            {/* Talk Body Content */}
-            <div class="text-gray-600 dark:text-gray-400 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
-              <Content />
+        return (
+          <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow">
+            <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center bg-gray-50 dark:bg-gray-850 text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-800">
+              <Presentation size={28} />
             </div>
+            <div class="flex-grow">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-sm font-[900] text-gray-400 dark:text-gray-500 font-mono">{talk.data.date}</span>
+                <span class="px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
+                  {talk.data.type}
+                </span>
+              </div>
+              <h3 class="text-2xl font-[900] text-gray-900 dark:text-white mb-2">{talk.data.title}</h3>
+              <p class="text-gray-600 dark:text-gray-300 font-[700] mb-2">{talk.data.venue}</p>
+              <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
+                {speakerList.map((sp, idx) => (
+                  <span>
+                    <a href={`/team/${sp.id}`} class="text-blue-600 dark:text-blue-455 hover:underline font-[800]">{sp.name}</a>
+                    {idx < speakerList.length - 1 ? ' & ' : ''}
+                  </span>
+                ))}
+              </p>
 
-            {talk.data.slides && talk.data.slides !== "visapp2019" && (
-              <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-[900] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 rounded-xl transition-colors">
-                Slides <ExternalLink size={16} class="ml-2" />
-              </a>
-            )}
+              {/* Talk Body Content */}
+              <div class="text-gray-600 dark:text-gray-400 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
+                <Content />
+              </div>
+
+              {talk.data.slides && talk.data.slides !== "visapp2019" && (
+                <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-[900] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-4 py-2 rounded-xl transition-colors">
+                  Slides <ExternalLink size={16} class="ml-2" />
+                </a>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </div>
 </Layout>
 
 <style is:global>
+  .engagement-body a {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    font-weight: 700;
+  }
+  .engagement-body ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .engagement-body li {
+    margin-bottom: 0.5rem;
+  }
   .engagement-body table {
     width: 100%;
     border-collapse: collapse;
@@ -129,7 +171,6 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
     font-size: 0.875rem;
   }
   .engagement-body th {
-    background-color: #f9fafb;
     font-weight: 800;
     text-align: left;
     padding: 0.75rem 1rem;

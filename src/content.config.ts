@@ -68,8 +68,8 @@ const engagements = defineCollection({
     venue: z.string(),
     slides: z.string().optional(),
     upcoming: z.boolean().default(false),
-    speaker: z.string(),
-    speakerId: z.string(),
+    speaker: z.union([z.string(), z.array(z.string())]),
+    speakerId: z.union([z.string(), z.array(z.string())]),
     mediaCard: z.string().optional(),
   })
 });
@@ -149,6 +149,11 @@ const mediaPresence = defineCollection({
       time: z.string(),
       room: z.string(),
       date: z.string(),
+      challenges: z.array(z.object({
+        name: z.string(),
+        organizer: z.string(),
+        organizerId: z.string().optional(),
+      })).optional(),
     })).optional().default([]),
     papers: z.array(z.object({
       title: z.string(),
