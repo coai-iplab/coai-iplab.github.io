@@ -1,0 +1,144 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { Calendar, Briefcase, Award, Shield, User, Users, Link as LinkIcon, Building } from 'lucide-react';
+import { COLORS } from '../utils/constants';
+
+const allProjects = await getCollection('fundedProjects');
+const sortedProjects = allProjects.sort((a, b) => (a.data.priority || 0) - (b.data.priority || 0));
+
+const piProjects = sortedProjects.filter(p => p.data.role === 'Principal Investigator');
+const jointProjects = sortedProjects.filter(p => p.data.role === 'Joint Leadership');
+---
+
+<Layout title="Co-AI Research Group | Funded Projects">
+  <div class="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl">
+    
+    {/* Page Header */}
+    <div class="border-b border-gray-200 pb-10">
+      <h1 class="text-5xl font-[900] text-gray-900 mb-6 tracking-tight">Funded Projects</h1>
+      <p class="text-xl text-gray-600 font-[600] leading-relaxed max-w-4xl">
+        Selected funded projects led or co-led by the group in egocentric vision, procedural understanding, applied memory, and human-centred AI.
+      </p>
+    </div>
+
+    {/* Principal Investigator Section */}
+    {piProjects.length > 0 && (
+      <div class="space-y-8">
+        <div class="border-b border-gray-100 pb-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+            <User size={20} />
+          </div>
+          <h2 class="text-3xl font-[900] text-gray-900 tracking-tight">Principal Investigator</h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+          {piProjects.map((project) => (
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div class="space-y-2">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider bg-blue-50 text-blue-700">
+                    <Shield size={12} /> {project.data.role}
+                  </span>
+                  <h3 class="text-2xl font-[900] text-gray-900 leading-snug">{project.data.title}</h3>
+                </div>
+                
+                {/* Meta details badge column */}
+                <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 font-mono">
+                  <span class="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                    <Calendar size={12} /> {project.data.period}
+                  </span>
+                  <span class="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                    <Briefcase size={12} /> {project.data.funding}
+                  </span>
+                </div>
+              </div>
+
+              <p class="text-gray-600 font-[500] leading-relaxed text-base">{project.data.description}</p>
+
+              {project.data.partners && (
+                <div class="pt-4 border-t border-gray-50 flex items-start gap-2 text-sm text-gray-500 font-[600]">
+                  <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
+                  <span>Partners: {project.data.partners}</span>
+                </div>
+              )}
+
+              {project.data.link && (
+                <div class="pt-2">
+                  <a 
+                    href={project.data.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    class="inline-flex items-center gap-1 text-sm font-[900] text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Project Link <LinkIcon size={14} />
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Joint Leadership Section */}
+    {jointProjects.length > 0 && (
+      <div class="space-y-8">
+        <div class="border-b border-gray-100 pb-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+            <Users size={20} />
+          </div>
+          <h2 class="text-3xl font-[900] text-gray-900 tracking-tight">Joint Leadership</h2>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+          {jointProjects.map((project) => (
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div class="space-y-2">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider bg-purple-50 text-purple-700">
+                    <Users size={12} /> {project.data.role}
+                  </span>
+                  <h3 class="text-2xl font-[900] text-gray-900 leading-snug">{project.data.title}</h3>
+                </div>
+                
+                {/* Meta details badge column */}
+                <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 font-mono">
+                  <span class="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                    <Calendar size={12} /> {project.data.period}
+                  </span>
+                  <span class="inline-flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                    <Briefcase size={12} /> {project.data.funding}
+                  </span>
+                </div>
+              </div>
+
+              <p class="text-gray-600 font-[500] leading-relaxed text-base">{project.data.description}</p>
+
+              {project.data.partners && (
+                <div class="pt-4 border-t border-gray-50 flex items-start gap-2 text-sm text-gray-500 font-[600]">
+                  <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
+                  <span>Joint PIs: {project.data.partners}</span>
+                </div>
+              )}
+
+              {project.data.link && (
+                <div class="pt-2">
+                  <a 
+                    href={project.data.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    class="inline-flex items-center gap-1 text-sm font-[900] text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Project Link <LinkIcon size={14} />
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+</Layout>

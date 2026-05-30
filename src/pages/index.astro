@@ -1,0 +1,156 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { Award, FileText, Megaphone, Calendar } from 'lucide-react';
+import { COLORS } from '../utils/constants';
+
+const rawNewsItems = (await getCollection('news')).sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const newsItems = await Promise.all(
+  rawNewsItems.map(async (item) => {
+    const { Content } = await render(item);
+    return { item, Content, isTalk: false };
+  })
+);
+
+const allEngagements = await getCollection('engagements');
+const upcomingEngagements = allEngagements.filter(e => e.data.upcoming);
+const upcomingTalksAsNews = await Promise.all(
+  upcomingEngagements.map(async (talk) => {
+    const { Content } = await render(talk);
+    const newsStyleItem = {
+      id: talk.id,
+      data: {
+        date: talk.data.date,
+        type: talk.data.type,
+        icon: 'Calendar',
+        color: '#e86f38',
+        title: talk.data.title,
+        mediaCard: talk.data.mediaCard,
+      }
+    };
+    return { item: newsStyleItem, Content, isTalk: true };
+  })
+);
+
+// Prepend upcoming talks on top of the news list
+const combinedFeed = [...upcomingTalksAsNews, ...newsItems];
+
+const homeEntry = await getEntry('home', 'index');
+const homeData = homeEntry ? homeEntry.data : {
+  title: "Advancing Embodied <br/>Human-AI Symbiosis",
+  description: "We explore the intersection of Computer Vision, Machine Learning, and wearable computing to build systems that truly understand real-world procedural activities."
+};
+
+const ICONS: Record<string, any> = {
+  Award, FileText, Megaphone, Calendar
+};
+
+const formatDate = (dateStr: string) => {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+};
+---
+
+<Layout title="Co-AI Research Group | Home">
+  <div class="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    {/* Hero Section */}
+    <header class="max-w-4xl space-y-6 pt-4">
+      <h1 class="text-3xl md:text-5xl font-[900] tracking-tight text-gray-900 leading-[1.1]" set:html={homeData.title}>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 leading-relaxed font-[600] max-w-3xl" set:html={homeData.description}>
+      </p>
+    </header>
+
+    {/* News Section */}
+    <div class="space-y-8">
+      <div class="border-b border-gray-200 pb-4">
+        <h2 class="text-3xl font-[900] text-gray-900 tracking-tight flex items-center gap-2">
+          <Megaphone size={28} class="text-gray-400" /> Latest News & Events
+        </h2>
+      </div>
+      
+      <div class="space-y-6 max-w-4xl">
+        {combinedFeed.map(({ item, Content, isTalk }) => {
+          const IconComponent = ICONS[item.data.icon] || Megaphone;
+          return (
+            <div class={`p-8 rounded-3xl border flex flex-col sm:flex-row gap-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden ${isTalk ? 'bg-gradient-to-br from-red-50/30 to-orange-50/30 border-red-100' : 'bg-white border-gray-100'}`}>
+              {isTalk && (
+                <div class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-[900] uppercase tracking-widest px-3 py-1 rounded-bl-xl">
+                  Upcoming Event
+                </div>
+              )}
+              <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center" style={`background-color: ${item.data.color || COLORS.teal}15; color: ${item.data.color || COLORS.teal};`}>
+                {IconComponent && <IconComponent size={28} />}
+              </div>
+              <div class="flex-grow">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-sm font-[900] text-gray-400 uppercase tracking-wider">{formatDate(item.data.date)}</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider" style={`background-color: ${item.data.color || COLORS.teal}15; color: ${item.data.color || COLORS.teal};`}>
+                    {item.data.type}
+                  </span>
+                </div>
+                <h3 class="text-2xl font-[900] text-gray-900 mb-2 leading-tight">{item.data.title}</h3>
+                <div class="text-gray-600 font-[600] leading-relaxed space-y-2 news-body">
+                  <Content />
+                  {isTalk && item.data.mediaCard && (
+                    <div class="mt-2">
+                      <a href={`/media/${item.data.mediaCard}`} class="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-[800] text-xs uppercase tracking-wider hover:bg-blue-100 transition-colors" target="_blank" rel="noopener noreferrer">
+                        View Social Card
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  .news-body a {
+    color: #1b285c;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    font-weight: 800;
+    transition: color 0.2s ease;
+  }
+  .news-body a:hover {
+    color: #2a9d8f;
+  }
+  .news-body ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .news-body li {
+    margin-bottom: 0.5rem;
+  }
+  .news-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+  .news-body th {
+    background-color: #f9fafb;
+    font-weight: 800;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    color: #374151;
+  }
+  .news-body td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+  }
+  .news-body tr:hover td {
+    background-color: #f9fafb;
+  }
+</style>

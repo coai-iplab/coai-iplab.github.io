@@ -1,0 +1,650 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { ArrowLeft, Download } from 'lucide-react';
+
+export async function getStaticPaths() {
+  const cards = await getCollection('mediaPresence');
+  return cards.map(card => ({
+    params: { id: card.id },
+    props: { card },
+  }));
+}
+
+const { card } = Astro.props;
+const { title, subtitle, event, date, talks = [], papers = [] } = card.data;
+
+// Pre-fetch logos as base64 data URIs to avoid CORS issues during PNG export
+const fetchBase64 = async (url: string, mime: string) => {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    const b64 = Buffer.from(buf).toString('base64');
+    return `data:${mime};base64,${b64}`;
+  } catch { return null; }
+};
+
+const unict_logo = await fetchBase64('https://www.brand.unict.it/img/UniCT-Logo.webp', 'image/webp');
+const iplab_logo = await fetchBase64('https://fpv-iplab.github.io/WISH/img/iplablogo.png', 'image/png');
+
+// Unique dates for timeline (preserve order of first appearance)
+const allDates = papers.flatMap(p => p.sessions.map(s => s.date));
+const uniqueDates = [...new Set(allDates)];
+
+// Color palette per unique date
+const palette = ['#e86f38', '#2a9d8f', '#f4a24c', '#7b5b9e', '#e76f51'];
+const dateColorMap: Record<string, string> = {};
+uniqueDates.forEach((d, i) => { dateColorMap[d] = palette[i % palette.length]; });
+
+// Short date label — "June 3" → { month: "JUNE", day: "3" }
+const fmtDate = (d: string) => {
+  const parts = d.trim().split(' ');
+  return { month: parts[0]?.toUpperCase(), day: parts[1] ?? '' };
+};
+
+const cardSlug = card.id;
+---
+
+<Layout title={`Co-AI | ${title}: ${subtitle}`}>
+  <div class="media-page">
+
+    <!-- Action bar (outside the card, not exported in PNG) -->
+    <div class="action-bar">
+      <a href="/engagement" class="back-link">
+        <ArrowLeft size={16} /> Back to Public Engagement
+      </a>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         THE CARD — everything inside is exported
+         ═══════════════════════════════════════════ -->
+    <div class="share-card" id="share-card">
+
+      <!-- Corner decorations (inline SVG, no external refs) -->
+      <svg class="deco deco-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 60 Q 30 20 60 50 Q 80 70 110 40" stroke="#2a9d8f" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"/>
+        <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"/>
+        <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"/>
+      </svg>
+      <svg class="deco deco-tr" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 40 Q 40 70 70 40 Q 90 20 115 55" stroke="#e86f38" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"/>
+        <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"/>
+      </svg>
+      <svg class="deco deco-bl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 80 Q 40 50 70 80 Q 90 100 115 70" stroke="#7b5b9e" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"/>
+        <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"/>
+      </svg>
+      <svg class="deco deco-br" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 50 Q 40 80 70 50 Q 90 30 115 65" stroke="#f4a24c" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"/>
+        <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"/>
+      </svg>
+
+      <!-- ── HEADER ── -->
+      <div class="card-header">
+        <div class="card-title-block">
+          <div class="card-event-line">{title}:</div>
+          <div class="card-subtitle-line">
+            {subtitle.split(' ').map((word, i) => (
+              <span class={`word word-${i}`}>{word} </span>
+            ))}
+          </div>
+        </div>
+        <!-- Co-AI + institution logos top-right -->
+        <div class="header-logos">
+          {unict_logo && <img src={unict_logo} alt="University of Catania" class="hdr-logo unict" />}
+          {iplab_logo && <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />}
+          <div class="logo-vsep"></div>
+          <div class="co-ai-logo" aria-label="Co-AI">
+            <span class="logo-co">Co</span><span class="logo-dash">-</span><span class="logo-a">A</span><span class="logo-i">I</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── INVITED TALKS ── -->
+      {talks.map(talk => (
+        <div class="talk-card">
+          <!-- Calendar icon -->
+          <div class="cal-icon" aria-hidden="true">
+            <div class="cal-rings"><span></span><span></span></div>
+            <div class="cal-body">
+              <span class="cal-month">{fmtDate(talk.date).month}</span>
+              <span class="cal-year">2026</span>
+            </div>
+          </div>
+
+          <div class="talk-content">
+            <span class="type-pill orange-bg">{talk.type.toUpperCase()}</span>
+            <h2 class="talk-title">{talk.title.toUpperCase()}</h2>
+            <p class="talk-presenter">
+              SPEAKER:&nbsp;
+              {(talk.presenterIds ?? []).map((pid, i) => (
+                <>
+                  <a href={`/team/${pid}`} class="presenter-link">{(talk.presenterIds ?? [])[i] ? talk.presenter.split(/\s*[,&]\s*/)[i] ?? talk.presenter : talk.presenter}</a>
+                  {i < (talk.presenterIds ?? []).length - 1 ? <span>,&nbsp;</span> : null}
+                </>
+              ))}
+              {(!talk.presenterIds || talk.presenterIds.length === 0) && <span>{talk.presenter}</span>}
+            </p>
+            <div class="talk-pills">
+              {talk.workshopUrl
+                ? <a href={talk.workshopUrl} target="_blank" rel="noopener" class="pill teal-pill">WORKSHOP&nbsp;|&nbsp;{talk.workshop.replace(' Workshop','').toUpperCase()}</a>
+                : <span class="pill teal-pill">WORKSHOP&nbsp;|&nbsp;{talk.workshop.replace(' Workshop','').toUpperCase()}</span>
+              }
+              <span class="pill purple-pill">TIME:&nbsp;{talk.time}</span>
+              <span class="pill orange-pill">LOCATION:&nbsp;{talk.room.toUpperCase()}</span>
+            </div>
+          </div>
+
+          <!-- AR Person illustration (pure inline SVG, no external refs) -->
+          <svg class="ar-person" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="22" r="16" fill="#f4d7b0"/>
+            <rect x="24" y="18" width="32" height="12" rx="6" fill="#4a90d9" opacity="0.85"/>
+            <rect x="22" y="20" width="8" height="8" rx="3" fill="#4a90d9"/>
+            <rect x="50" y="20" width="8" height="8" rx="3" fill="#4a90d9"/>
+            <rect x="28" y="20" width="10" height="8" rx="2" fill="#87ceeb" opacity="0.7"/>
+            <rect x="42" y="20" width="10" height="8" rx="2" fill="#87ceeb" opacity="0.7"/>
+            <rect x="22" y="22" width="2" height="4" rx="1" fill="#1b285c"/>
+            <rect x="56" y="22" width="2" height="4" rx="1" fill="#1b285c"/>
+            <rect x="18" y="22" width="4" height="2" rx="1" fill="#888"/>
+            <rect x="58" y="22" width="4" height="2" rx="1" fill="#888"/>
+            <path d="M30 38 Q40 55 50 38" fill="#4caf82" stroke="none"/>
+            <rect x="28" y="38" width="24" height="30" rx="4" fill="#4caf82"/>
+            <path d="M28 55 L15 70" stroke="#f4d7b0" stroke-width="5" stroke-linecap="round"/>
+            <path d="M52 55 L65 70" stroke="#f4d7b0" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      ))}
+
+      <!-- ── PAPERS & SCHEDULE ── -->
+      {papers.map(paper => {
+        const paperDates = [...new Set(paper.sessions.map(s => s.date))];
+        return (
+          <div class="schedule-card">
+            <h2 class="schedule-title">{paper.title.toUpperCase()}</h2>
+
+            <!-- Timeline -->
+            <div class="timeline">
+              {paperDates.map((d, i) => {
+                const { month, day } = fmtDate(d);
+                const color = dateColorMap[d];
+                return (
+                  <div class="tl-item">
+                    {i > 0 && <div class="tl-line" style={`background: linear-gradient(to right, ${dateColorMap[paperDates[i-1]]}, ${color})`}></div>}
+                    <div class="tl-dot" style={`background: ${color}`}>
+                      <span class="tl-month">{month}</span>
+                      <span class="tl-day">{day}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <!-- Session rows -->
+            <div class="sessions">
+              {paper.sessions.map((s, si) => {
+                const { month, day } = fmtDate(s.date);
+                const color = dateColorMap[s.date];
+                const isOral = s.type === 'Oral';
+                return (
+                  <div class={`session-row ${si % 2 === 0 ? 'row-even' : 'row-odd'}`}>
+                    <div class="s-date" style={`background: ${color}`}>
+                      <span class="s-month">{month}</span>
+                      <span class="s-day">{day}</span>
+                    </div>
+                    <div class="s-time">{s.time}</div>
+                    <div class={`s-type ${isOral ? 'oral' : 'poster'}`}>{s.type.toUpperCase()}</div>
+                    <div class="s-venue">
+                      {s.venueUrl
+                        ? <a href={s.venueUrl} target="_blank" rel="noopener">{s.venue}</a>
+                        : s.venue
+                      }
+                      <span class="s-room">{s.room}</span>
+                    </div>
+                    <div class="s-presenters">
+                      {(s.presenterIds ?? s.presenters).map((pid, i) => {
+                        const name = s.presenters[i] ?? pid;
+                        const id = (s.presenterIds ?? [])[i] ?? null;
+                        return (
+                          <>
+                            {id
+                              ? <a href={`/team/${id}`} class="presenter-link">{name}</a>
+                              : <span>{name}</span>
+                            }
+                            {i < s.presenters.length - 1 ? <span class="sep">,&nbsp;</span> : null}
+                          </>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+    </div><!-- /share-card -->
+  </div>
+</Layout>
+
+<!-- Download script using html-to-image (ES module from CDN) -->
+<script type="module">
+  import { toPng } from 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm';
+
+  const btn = document.getElementById('download-btn');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      const card = document.getElementById('share-card');
+      if (!card) return;
+
+      const slug = btn.dataset.slug ?? 'co-ai-card';
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Generating…';
+      btn.disabled = true;
+
+      try {
+        const dataUrl = await toPng(card, {
+          pixelRatio: 3,
+          backgroundColor: '#ffffff',
+          style: { borderRadius: '0' }, // avoids clipping in some browsers
+        });
+        const link = document.createElement('a');
+        link.download = `co-ai-${slug}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error('PNG export failed:', err);
+        alert('Export failed — see browser console for details.');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  /* ── Page wrapper ── */
+  .media-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding-bottom: 3rem;
+  }
+
+  /* ── Action bar ── */
+  .action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: #1b285c; }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    color: #fff;
+    background: #1b285c;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .download-btn:hover { background: #2a9d8f; transform: translateY(-1px); }
+  .download-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* ── Card shell ── */
+  .share-card {
+    position: relative;
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    padding: 2rem 1.75rem 1.25rem;
+    overflow: hidden;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* ── Corner decorations ── */
+  .deco {
+    position: absolute;
+    width: 130px;
+    pointer-events: none;
+  }
+  .deco-tl { top: -10px; left: -10px; }
+  .deco-tr { top: -10px; right: -10px; transform: scaleX(-1); }
+  .deco-bl { bottom: -10px; left: -10px; transform: scaleY(-1); }
+  .deco-br { bottom: -10px; right: -10px; transform: scale(-1); }
+
+  /* ── Header ── */
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+  .card-event-line {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #1b285c;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .card-subtitle-line {
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .word-0 { color: #1b285c; }
+  .word-1 {
+    background: linear-gradient(90deg, #2a9d8f, #7b5b9e, #e86f38);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Co-AI logo */
+  .co-ai-logo {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Header logos group */
+  .header-logos {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+  .hdr-logo {
+    height: 2rem;       /* unified height for all logos */
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .hdr-logo.unict { height: 2rem; }
+  .hdr-logo.iplab { height: 2rem; }
+  .logo-vsep {
+    width: 1px;
+    height: 1.8rem;
+    background: #e5e7eb;
+    flex-shrink: 0;
+  }
+  .logo-co { color: #1b285c; }
+  .logo-dash { color: #8ab07d; }
+  .logo-a {
+    background: linear-gradient(to bottom, #7b5b9e 55%, #e86f38 45%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-i { color: #f4a24c; }
+
+  /* ── Invited talk card ── */
+  .talk-card {
+    background: #f8f8f6;
+    border-radius: 20px;
+    padding: 1rem;
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cal-icon {
+    flex-shrink: 0;
+    width: 62px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .cal-rings {
+    background: #e86f38;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 3px 0 2px;
+  }
+  .cal-rings span {
+    width: 6px; height: 6px;
+    border-radius: 50%; background: #fff;
+  }
+  .cal-body {
+    background: #fff;
+    border: 2px solid #e86f38;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    text-align: center;
+    padding: 4px 2px;
+    display: flex;
+    flex-direction: column;
+  }
+  .cal-month { font-size: 0.55rem; font-weight: 900; color: #e86f38; text-transform: uppercase; letter-spacing: 0.05em; }
+  .cal-year  { font-size: 0.75rem; font-weight: 900; color: #1b285c; }
+
+  .talk-content { flex: 1; min-width: 0; }
+
+  .type-pill {
+    display: inline-block;
+    font-size: 0.6rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 999px;
+    margin-bottom: 0.35rem;
+  }
+  .orange-bg { background: #e86f38; color: #fff; }
+
+  .talk-title {
+    font-size: 0.8rem; font-weight: 900; color: #1b285c;
+    line-height: 1.3; margin: 0 0 0.3rem;
+    letter-spacing: -0.01em;
+  }
+  .talk-presenter {
+    font-size: 0.65rem; font-weight: 900; color: #374151;
+    margin: 0 0 0.45rem;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.1rem;
+  }
+
+  /* Clickable presenter name */
+  .presenter-link {
+    color: #1b285c;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 900;
+    transition: color 0.2s;
+  }
+  .presenter-link:hover { color: #2a9d8f; }
+
+  .talk-pills {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+  }
+  .pill {
+    display: inline-block;
+    font-size: 0.6rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 3px 10px; border-radius: 999px;
+    text-decoration: none; white-space: nowrap;
+  }
+  .pill:is(a):hover { opacity: 0.85; }
+  .teal-pill   { background: #2a9d8f; color: #fff; }
+  .purple-pill { background: #7b5b9e; color: #fff; }
+  .orange-pill { background: #e86f38; color: #fff; }
+
+  .ar-person { width: 72px; flex-shrink: 0; align-self: center; }
+
+  /* ── Schedule card ── */
+  .schedule-card {
+    background: #fff4ec;
+    border-radius: 20px;
+    padding: 1rem;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1rem;
+  }
+  .schedule-title {
+    font-size: 0.72rem; font-weight: 900; color: #1b285c;
+    letter-spacing: -0.01em; line-height: 1.3;
+    margin: 0 0 0.9rem; text-align: center;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex; align-items: center;
+    justify-content: center; gap: 0;
+    margin-bottom: 0.9rem;
+  }
+  .tl-item { display: flex; align-items: center; }
+  .tl-line { width: 50px; height: 4px; border-radius: 2px; }
+  .tl-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #fff; font-weight: 900;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); flex-shrink: 0;
+  }
+  .tl-month { font-size: 0.45rem; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
+  .tl-day   { font-size: 1rem; line-height: 1.1; }
+
+  /* Session rows — grid: date | time | type | venue+room | presenters */
+  .sessions { border-radius: 12px; overflow: hidden; }
+  .session-row {
+    display: grid;
+    grid-template-columns: 40px 82px 56px 1fr 1fr;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.68rem; font-weight: 700; color: #374151;
+  }
+  .row-even { background: rgba(255,255,255,0.75); }
+  .row-odd  { background: rgba(255,255,255,0.3); }
+
+  .s-date {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #fff; font-weight: 900; flex-shrink: 0;
+  }
+  .s-month { font-size: 0.38rem; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
+  .s-day   { font-size: 0.85rem; line-height: 1.1; }
+
+  .s-time { font-size: 0.62rem; font-weight: 800; color: #374151; white-space: nowrap; }
+
+  .s-type {
+    font-size: 0.52rem; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 7px; border-radius: 999px;
+    text-align: center; white-space: nowrap;
+  }
+  .oral   { background: #2a9d8f; color: #fff; }
+  .poster { background: #e86f38; color: #fff; }
+
+  .s-venue {
+    font-size: 0.62rem; font-weight: 800; color: #374151;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .s-venue a { color: #1b285c; text-decoration: underline; text-underline-offset: 2px; }
+  .s-venue a:hover { color: #2a9d8f; }
+  .s-room { font-size: 0.55rem; font-weight: 700; color: #6b7280; }
+
+  .s-presenters {
+    font-size: 0.62rem; font-weight: 800; color: #374151;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0;
+  }
+  .s-presenters .sep { color: #9ca3af; }
+
+  /* ── Card footer with logos ── */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f3f4f6;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-sep {
+    width: 1px; height: 32px;
+    background: #e5e7eb;
+  }
+  .footer-logo {
+    object-fit: contain;
+    max-height: 36px;
+    max-width: 120px;
+  }
+  .footer-logo.unict { max-height: 40px; max-width: 130px; }
+  .footer-logo.iplab { max-height: 32px; max-width: 90px; }
+  .footer-text { font-size: 0.65rem; font-weight: 800; color: #6b7280; }
+
+  /* PRINT: Only show the card, hide sidebar and non-card elements */
+  @media print {
+    body, html {
+      background: #fff !important;
+    }
+    .media-page > .action-bar,
+    .media-page > :not(.share-card) {
+      display: none !important;
+    }
+    .media-page, .share-card {
+      box-shadow: none !important;
+      background: #fff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100vw !important;
+      min-width: 0 !important;
+      max-width: 100vw !important;
+    }
+    .share-card {
+      position: static !important;
+      width: 100vw !important;
+      min-width: 0 !important;
+      max-width: 100vw !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+    }
+    /* Remove any print-unfriendly backgrounds or decorations if needed */
+    .deco { display: none !important; }
+  }
+</style>

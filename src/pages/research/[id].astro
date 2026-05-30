@@ -1,0 +1,196 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { ExternalLink, Users, Award } from 'lucide-react';
+import { COLORS } from '../../utils/constants';
+
+export async function getStaticPaths() {
+  const publications = await getCollection('publications');
+  return publications.map((pub) => ({
+    params: { id: pub.id },
+    props: { pub },
+  }));
+}
+
+const { pub: rawPub } = Astro.props;
+const pub = {
+  ...rawPub,
+  data: {
+    ...rawPub.data,
+    links: rawPub.data.links?.filter(l => l.label.toLowerCase() !== 'doi') || []
+  }
+};
+const publications = (await getCollection('publications'))
+  .map(p => ({
+    ...p,
+    data: {
+      ...p.data,
+      links: p.data.links?.filter(l => l.label.toLowerCase() !== 'doi') || []
+    }
+  }));
+const teamMembers = await getCollection('team');
+
+const renderAuthors = (authorsStr: string) => {
+  const authors = authorsStr.split(/,\s*|\s+and\s+;\s*/).map(a => a.trim()).filter(Boolean);
+  return authors.map(author => {
+    let matchedMember: any = null;
+    const isLab = teamMembers.some(m => {
+      const r = m.data.name.trim();
+      const n1 = r.toLowerCase().replace(/[\.\s-]/g, '');
+      const n2 = author.toLowerCase().replace(/[\.\s-]/g, '');
+      if (n1 === n2 || n2.includes(n1) || n1.includes(n2)) {
+        matchedMember = m;
+        return true;
+      }
+      
+      const rParts = r.split(' ');
+      const rLastName = rParts[rParts.length - 1].toLowerCase();
+      const aLastName = author.split(' ').pop()?.toLowerCase() || '';
+      
+      if (rLastName === aLastName) {
+        const rFirstInit = rParts[0][0].toLowerCase();
+        if (author[0].toLowerCase() === rFirstInit) {
+          matchedMember = m;
+          return true;
+        }
+      }
+      return false;
+    });
+    
+    return { name: author, isLab, id: matchedMember?.id };
+  });
+};
+
+const getTeaserUrl = (teaser?: string) => {
+  if (!teaser) return undefined;
+  if (teaser.startsWith('http')) return teaser;
+  return teaser;
+};
+
+const teaserUrl = getTeaserUrl(pub.data.teaser);
+---
+
+<Layout title={`Co-AI Research Group | ${pub.data.title}`}>
+  <div class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl mx-auto">
+    <a href="/research" class="text-sm font-[800] text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1">
+      &larr; Back to Research
+    </a>
+    
+    <header class="space-y-6">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs font-[900] px-4 py-1.5 rounded-full uppercase tracking-widest" style={`background-color: ${pub.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal}15; color: ${pub.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal};`}>
+          {pub.data.pub_type}
+        </span>
+        <span class="text-xs font-[900] px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 font-mono">
+          {pub.data.year}
+        </span>
+        {pub.data.award && pub.data.award.split(';').map(aw => (
+          <span class="text-xs font-[900] px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider flex items-center gap-1">
+            🏆 {aw.trim()}
+          </span>
+        ))}
+      </div>
+      
+      <h1 class="text-3xl md:text-5xl font-[900] text-gray-900 tracking-tight leading-tight">
+        {pub.data.title}
+      </h1>
+      
+      <div class="space-y-2 text-gray-700 text-lg">
+        <p class="font-[800] flex items-center gap-2">
+          <Users size={20} class="text-gray-400" />
+          <span>
+            {renderAuthors(pub.data.authors).map((author, index, arr) => (
+              <span>
+                {author.isLab ? (
+                  <a href={`/team/${author.id}`} class="underline decoration-gray-400 underline-offset-4 font-[800] hover:text-blue-700 transition-colors">
+                    {author.name}
+                  </a>
+                ) : (
+                  <span>{author.name}</span>
+                )}
+                {index < arr.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </span>
+        </p>
+        <p class="font-[600] text-gray-500 italic flex items-center gap-2"><Award size={20} class="text-gray-400" /> {pub.data.venue}</p>
+      </div>
+    </header>
+    
+    {teaserUrl && (
+      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-center max-h-[500px] overflow-hidden">
+        <img 
+          src={teaserUrl} 
+          alt={pub.data.title} 
+          class="max-w-full max-h-[450px] object-contain rounded-2xl"
+        />
+      </div>
+    )}
+
+    {pub.data.links && pub.data.links.length > 0 && (
+      <div class="space-y-4">
+        <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest">Links & Resources</h3>
+        <div class="flex flex-wrap gap-3">
+          {pub.data.links.map(l => (
+            <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-3 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-2xl font-[900] transition-all gap-2 text-sm">
+              {l.label} <ExternalLink size={16} />
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {pub.data.related && (() => {
+      const relatedEntry = publications.find(p => p.id.toLowerCase() === pub.data.related.toLowerCase());
+      if (!relatedEntry) return null;
+      return (
+        <div class="space-y-4 border-t border-gray-100 pt-8">
+          <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest">Related Version</h3>
+          <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-6 items-center justify-between">
+            <div>
+              <span class="text-[10px] font-[900] px-3 py-1 rounded-full uppercase tracking-wider font-mono mr-2" style={`background-color: ${relatedEntry.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal}15; color: ${relatedEntry.data.pub_type === 'journal' ? COLORS.purple : COLORS.teal};`}>
+                {relatedEntry.data.pub_type === 'journal' ? 'Journal' : 'Conference'}
+              </span>
+              <a href={`/research/${relatedEntry.id}`} class="text-lg font-[900] text-gray-900 hover:text-blue-700 transition-colors inline-block mt-2">
+                {relatedEntry.data.title} <span class="text-gray-400 font-mono">({relatedEntry.data.year})</span>
+              </a>
+            </div>
+            {relatedEntry.data.links && relatedEntry.data.links.length > 0 && (
+              <div class="flex flex-wrap gap-2 flex-shrink-0">
+                {relatedEntry.data.links.map(l => (
+                  <a href={l.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-xl font-[900] transition-colors text-xs gap-1">
+                    {l.label} <ExternalLink size={12} />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    })()}
+
+    {pub.body && pub.body.trim() && (
+      <div class="prose prose-zinc max-w-none border-t border-gray-100 pt-8">
+        <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest mb-4">Abstract / Description</h3>
+        <div class="text-gray-600 leading-relaxed font-[600] text-lg whitespace-pre-line">
+          {pub.body}
+        </div>
+      </div>
+    )}
+
+    {pub.data.bibtex && (
+      <div class="space-y-4 border-t border-gray-100 pt-8">
+        <h3 class="text-xs font-[900] text-gray-400 uppercase tracking-widest">BibTeX Citation</h3>
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 relative group font-mono text-xs overflow-x-auto">
+          <pre class="text-gray-700 whitespace-pre leading-relaxed">{pub.data.bibtex}</pre>
+          <button 
+            onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 1500)"
+            class="absolute top-4 right-4 bg-white hover:bg-gray-100 text-gray-600 border border-gray-200 px-3 py-1.5 rounded-lg font-[800] transition-colors text-[10px] uppercase tracking-wider"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>

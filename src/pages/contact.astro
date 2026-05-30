@@ -1,0 +1,46 @@
+---
+import { getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { Mail, ExternalLink } from 'lucide-react';
+import { COLORS } from '../utils/constants';
+
+const contactEntry = await getEntry('contact', 'index');
+const contactData = contactEntry ? contactEntry.data : {
+  title: "Contact Us",
+  description: "Get in touch with the Co-AI Research Group.",
+  email: "antonino.furnari@unict.it",
+  website: "https://antoninofurnari.github.io"
+};
+---
+
+<Layout title="Co-AI Research Group | Contact">
+  <div class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-2xl mx-auto">
+    <header class="border-b border-gray-200 pb-8 text-center">
+      <h2 class="text-5xl font-[900] text-gray-900 mb-4 tracking-tight">{contactData.title}</h2>
+      <p class="text-xl text-gray-600 font-[600] leading-relaxed">
+        {contactData.description}
+      </p>
+    </header>
+
+    <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+      <div class="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-sm" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
+        <Mail size={38} />
+      </div>
+      
+      <h3 class="text-3xl font-[900] text-gray-900 mb-4 tracking-tight">Get in Touch</h3>
+      <p class="text-gray-600 font-[600] leading-relaxed mb-8 max-w-md">
+        For inquiries, collaborations, or speaking requests, please contact the Principal Investigator Antonino Furnari.
+      </p>
+
+      <div class="w-full space-y-4">
+        <a href={`mailto:${contactData.email}`} class="inline-flex items-center justify-center w-full gap-3 px-6 py-4 bg-gray-900 text-white rounded-2xl font-[900] hover:bg-gray-800 transition-colors text-lg shadow-md">
+          {contactData.email} <Mail size={20} />
+        </a>
+        
+        <a href={contactData.website} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full gap-3 px-6 py-4 bg-white border-2 border-gray-200 text-gray-800 rounded-2xl font-[900] hover:bg-gray-50 hover:border-gray-300 transition-colors text-lg shadow-sm">
+          Visit Antonino's Website <ExternalLink size={20} />
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>

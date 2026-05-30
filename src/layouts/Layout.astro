@@ -1,0 +1,36 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Navigation from '../components/react/Navigation.tsx';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Co-AI Research Group - Advancing Embodied Human-AI Symbiosis" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ClientRouter />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  </head>
+  <body class="min-h-screen bg-[#f8f9fa] flex flex-col md:flex-row text-gray-800 font-sans selection:bg-teal-100 selection:text-teal-900" style="font-family: 'Nunito', sans-serif;">
+    <Navigation client:load currentPath={Astro.url.pathname} />
+    
+    <main class="flex-1 w-full relative">
+      <div class="max-w-6xl mx-auto p-6 md:p-12 lg:px-20 lg:py-24 min-h-screen">
+        <slot />
+      </div>
+    </main>
+  </body>
+</html>

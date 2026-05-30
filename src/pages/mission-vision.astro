@@ -1,0 +1,77 @@
+---
+import { getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { Users, Eye, Shield, Sparkles, Brain, Code } from 'lucide-react';
+import { COLORS } from '../utils/constants';
+
+const mvEntry = await getEntry('missionVision', 'index');
+const mvData = mvEntry ? mvEntry.data : {
+  title: "Mission & Vision",
+  subtitle: "Our research philosophy, core values, and vision for the future of human-AI collaboration.",
+  whoWeAre: "Our group is part of the Image Processing Laboratory (IPLAB) at the University of Catania and focuses on computer vision and machine learning for human‑centred, real‑world scenarios. We specialize in understanding complex procedural activities from first‑person and ego‑exo video, with a particular emphasis on human skill, mistakes, and temporal structure.",
+  visionMain: "We envision embodied AI assistants that perceive the world through wearable and ambient sensors, maintain rich episodic memories of what has happened, and reason about what should happen next to help users achieve their goals. Rather than replacing human action, these systems aim to support it—by anticipating future steps, spotting mistakes, and offering the minimal effective cue at the right time.",
+  visionResearch: "Our research spans streaming perception and memory, task and skill modelling, and interactive assistance. We design models that go beyond passive recognition to capture long‑horizon dependencies, task graphs, and action scene graphs in egocentric settings, as well as methods that adapt across viewpoints and embodiments.",
+  perceptionMemoryDesc: "Streaming observation of the environment from egocentric perspectives to maintain continuous, rich episodic history.",
+  tasksSkillsDesc: "Modeling procedural action structure, assessing execution quality, and detecting fine-grained mistakes.",
+  assistanceInteractionDesc: "Delivering context-aware visual cues and guidance aligned with human intent and autonomy.",
+  methodologyValues: "We combine large‑scale datasets and benchmarks with controlled user studies and human‑in‑the‑loop protocols to evaluate not only accuracy, but also usefulness, cognitive load, and perceived autonomy. Our projects embrace open science—releasing datasets, benchmarks, and code whenever possible—and emphasize trustworthy, explainable assistance aligned with human agency and privacy."
+};
+---
+
+<Layout title={`Co-AI Research Group | ${mvData.title}`}>
+  <div class="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl">
+    {/* Page Header */}
+    <header class="border-b border-gray-200 pb-8">
+      <h2 class="text-5xl font-[900] text-gray-900 mb-4 tracking-tight">{mvData.title}</h2>
+      <p class="text-xl text-gray-600 font-[600] leading-relaxed">
+        {mvData.subtitle}
+      </p>
+    </header>
+
+    {/* Who We Are */}
+    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.purple}15; color: ${COLORS.purple};`}>
+        <Users size={26} />
+      </div>
+      <div class="space-y-6">
+        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Who we are</h3>
+        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.whoWeAre}>
+        </p>
+        <div class="pt-2">
+          <a href="/team" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+            Meet the Team Members &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* Vision */}
+    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.navy}15; color: ${COLORS.navy};`}>
+        <Eye size={26} />
+      </div>
+      <div class="space-y-4">
+        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Vision</h3>
+        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.visionMain}>
+        </p>
+      </div>
+    </section>
+
+    {/* Research */}
+    <section class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={`background-color: ${COLORS.teal}15; color: ${COLORS.teal};`}>
+        <Brain size={26} />
+      </div>
+      <div class="space-y-6">
+        <h3 class="text-3xl font-[900] text-gray-900 tracking-tight">Research</h3>
+        <p class="text-gray-600 font-[600] leading-relaxed text-lg" set:html={mvData.visionResearch}>
+        </p>
+        <div class="pt-2">
+          <a href="/research" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+            Explore Our Research &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

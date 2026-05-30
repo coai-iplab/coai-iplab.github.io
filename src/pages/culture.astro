@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Camera } from 'lucide-react';
+---
+
+<Layout title="Co-AI Research Group | Group Culture">
+  <div class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-6xl">
+    <header class="max-w-4xl border-b border-gray-200 pb-8">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-900 shadow-sm">
+          <Camera size={32} />
+        </div>
+        <h2 class="text-5xl font-[900] text-gray-900 tracking-tight">Group Culture</h2>
+      </div>
+      <p class="text-xl text-gray-600 font-[600] leading-relaxed">
+        Life at the Co-AI Research Group. We foster a highly collaborative, friendly, and vibrant environment. Here is a glimpse into our lab workspace, data collection efforts, and conference travels.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      {/* Placeholder images to represent lab photos, field work, and conferences */}
+      <div class="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-sm">
+        <img src="https://picsum.photos/seed/lab1/800/800" alt="Lab workspace" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+      </div>
+      <div class="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-sm">
+        <img src="https://picsum.photos/seed/lab2/800/800" alt="Team at conference" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+      </div>
+      <div class="aspect-[2/1] md:aspect-square col-span-2 md:col-span-1 rounded-3xl overflow-hidden bg-gray-100 shadow-sm">
+        <img src="https://picsum.photos/seed/lab3/800/800" alt="Data collection in the field" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+      </div>
+      <div class="aspect-[2/1] md:aspect-[3/2] col-span-2 rounded-3xl overflow-hidden bg-gray-100 shadow-sm">
+        <img src="https://picsum.photos/seed/lab4/1200/800" alt="Group Meeting" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+      </div>
+      <div class="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-sm">
+        <img src="https://picsum.photos/seed/lab5/800/800" alt="Social Event" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+      </div>
+    </div>
+  </div>
+</Layout>
