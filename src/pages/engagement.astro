@@ -61,7 +61,9 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
                 
                 {/* Talk Body Content */}
                 <div class="text-gray-600 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
-                  <Content />
+                  <div style="overflow-x:auto;">
+                    <Content />
+                  </div>
                 </div>
 
                 <div class="flex flex-wrap gap-2">
@@ -105,7 +107,9 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
 
             {/* Talk Body Content */}
             <div class="text-gray-600 font-[500] leading-relaxed mb-4 engagement-body prose prose-sm max-w-none">
-              <Content />
+              <div style="overflow-x:auto;">
+                <Content />
+              </div>
             </div>
 
             {talk.data.slides && talk.data.slides !== "visapp2019" && (
@@ -123,10 +127,13 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
 <style is:global>
   .engagement-body table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
     margin-top: 1rem;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+    overflow-x: auto;
+    display: block;
   }
   .engagement-body th {
     background-color: #f9fafb;
