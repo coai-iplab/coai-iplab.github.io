@@ -1,5 +1,5 @@
 ---
-date: "3-7 June 2026"
+date: "2026-06-03"
 title: "ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos"
 venue: "CVPR 2026 Workshops & Main Conference"
 type: "Oral & Poster Presentations"
