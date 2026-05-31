@@ -7,5 +7,5 @@ title: "One Paper Accepted at CVPR 2026"
 ---
 One paper accepted at <a href="http://cvpr.thecvf.com">CVPR 2026</a>!
 <ul>
-    <li>L. Seminara, D. Moltisanti, A. Furnari. ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos. <a href="https://arxiv.org/pdf/2603.04265" target="_blank">[Paper]</a></li> 
+    <li><u>L. Seminara</u>, D. Moltisanti, <u>A. Furnari</u>. ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos. <a href="https://arxiv.org/pdf/2603.04265" target="_blank">[Paper]</a></li> 
 </ul>

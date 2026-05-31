@@ -13,7 +13,17 @@ const newsItems = await Promise.all(
 );
 
 const allEngagements = await getCollection('engagements');
-const upcomingEngagements = allEngagements.filter(e => e.data.upcoming);
+const upcomingEngagements = allEngagements
+  .filter(e => e.data.upcoming)
+  .sort((a, b) => {
+    const numA = parseInt(a.id.replace('talk-', ''));
+    const numB = parseInt(b.id.replace('talk-', ''));
+    if (isNaN(numA) && isNaN(numB)) return a.id.localeCompare(b.id);
+    if (isNaN(numA)) return 1;
+    if (isNaN(numB)) return -1;
+    if (numA !== numB) return numA - numB;
+    return a.id.localeCompare(b.id);
+  });
 const upcomingTalksAsNews = await Promise.all(
   upcomingEngagements.map(async (talk) => {
     const { Content } = await render(talk);
@@ -101,14 +111,13 @@ const formatDate = (dateStr: string) => {
                     </div>
                     <h3 class="text-2xl md:text-3xl font-[900] text-gray-900 dark:text-white mb-2 leading-tight">{talk.data.title}</h3>
                     <p class="text-gray-700 dark:text-gray-300 font-[800] text-lg mb-2">{talk.data.venue}</p>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
-                      {speakerList.map((sp, idx) => (
-                        <span>
-                          <a href={`/team/${sp.id}`} class="hover:underline font-[800]" style="color: #e86f38;">{sp.name}</a>
-                          {idx < speakerList.length - 1 ? ' & ' : ''}
-                        </span>
-                      ))}
-                    </p>
+                    {!talk.data.hideSpeakers && (
+                      <p class="text-gray-500 dark:text-gray-400 text-sm font-[700] mb-4">
+                        {(talk.data.type === 'Oral & Poster Presentations' || talk.data.type === 'Poster Presentations') && 'Authors: '}{speakerList.map((sp, idx) => (
+                          <span><a href={sp.id.startsWith('http') ? sp.id : `/team/${sp.id}`} class={`hover:underline font-[800] ${(sp.name === 'Luigi Seminara' || sp.name === 'Antonino Furnari') ? 'underline' : ''}`} style="color: #e86f38;">{sp.name}</a>{idx < speakerList.length - 1 ? (speakerList.length > 2 ? ', ' : ' & ') : ''}</span>
+                        ))}
+                      </p>
+                    )}
                     
                     {/* Talk Body Content */}
                     <div class="text-gray-600 dark:text-gray-400 font-[500] leading-relaxed mb-4 news-body prose prose-sm max-w-none">
@@ -116,6 +125,11 @@ const formatDate = (dateStr: string) => {
                     </div>
 
                     <div class="flex flex-wrap gap-2">
+                      {talk.data.paperUrl && (
+                        <a href={talk.data.paperUrl} class="inline-flex items-center text-sm font-[900] px-4 py-2 rounded-xl transition-colors" style="color: #e86f38; background-color: #e86f3815;">
+                          Paper Page <ExternalLink size={16} class="ml-2" />
+                        </a>
+                      )}
                       {talk.data.slides && (
                         <a href={talk.data.slides} target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-sm font-[900] px-4 py-2 rounded-xl transition-colors" style="color: #e86f38; background-color: #e86f3815;">
                           Slides <ExternalLink size={16} class="ml-2" />
@@ -198,6 +212,10 @@ const formatDate = (dateStr: string) => {
     border-bottom: 1px solid #f3f4f6;
     color: #4b5563;
   }
+  .news-body th:nth-child(1), .news-body td:nth-child(1) { width: 25%; }
+  .news-body th:nth-child(2), .news-body td:nth-child(2) { width: 25%; }
+  .news-body th:nth-child(3), .news-body td:nth-child(3) { width: 20%; }
+  .news-body th:nth-child(4), .news-body td:nth-child(4) { width: 30%; }
   .news-body tr:hover td {
     background-color: #f9fafb;
   }

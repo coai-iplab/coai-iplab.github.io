@@ -1,8 +1,8 @@
 ---
 title: "ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos"
 featured: true
-teaser: "/images/teasers/Seminara2025-arxiv-teaser.png"
-authors: "Luigi Seminara, Daniele Moltisanti, Antonino Furnari"
+teaser: "/images/teasers/Seminara2026ViterbiPlanNet.png"
+authors: "Luigi Seminara, Davide Moltisanti, Antonino Furnari"
 venue: "IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)"
 year: "2026"
 priority: 1
@@ -19,7 +19,7 @@ bibtex: |
     year = { 2026 },
     booktitle = { IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) },
     title = { ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable Viterbi for Planning in Instructional Videos },
-    author = { Luigi Seminara and Daniele Moltisanti and Antonino Furnari },
+    author = { Luigi Seminara and Davide Moltisanti and Antonino Furnari },
     pdf = {https://arxiv.org/pdf/2603.04265},
     url = {https://arxiv.org/abs/2603.04265}
   }

@@ -3,10 +3,10 @@ import { getCollection } from 'astro:content';
 
 // Fetch all team names dynamically
 const teamMembers = await getCollection('team');
-const teamNames = teamMembers.map(m => m.data.name.trim());
+export const teamNames = teamMembers.map(m => m.data.name.trim());
 
 // We also manually include common variations or other common researchers of IPLAB in these papers (e.g. Giovanni Maria Farinella, Michele Mazzamuto, Francesco Ragusa)
-const labResearchers = [
+export const labResearchers = [
   ...teamNames,
   "Giovanni Maria Farinella",
   "Giovanni M. Farinella",

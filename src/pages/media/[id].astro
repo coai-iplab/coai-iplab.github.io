@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { ArrowLeft, Download } from 'lucide-react';
+import { teamNames } from '../../utils/authors';
 
 export async function getStaticPaths() {
   const cards = await getCollection('mediaPresence');
@@ -12,7 +13,9 @@ export async function getStaticPaths() {
 }
 
 const { card } = Astro.props;
-const { title, subtitle, event, date, talks = [], papers = [] } = card.data;
+const { title, subtitle, event, date, talks = [], papers = [], extendedAbstracts = [] } = card.data;
+
+const allPublications = await getCollection('publications');
 
 // Pre-fetch logos as base64 data URIs to avoid CORS issues during PNG export
 const fetchBase64 = async (url: string, mime: string) => {
@@ -44,23 +47,38 @@ const fmtDate = (d: string) => {
 };
 
 const cardSlug = card.id;
+
+const isGroupMember = (author: string) => {
+  return teamNames.some(r => {
+    const n1 = r.toLowerCase();
+    const n2 = author.toLowerCase();
+    if (n1 === n2) return true;
+    if (n2.includes(r.split(' ').pop()!.toLowerCase())) {
+      const rParts = r.split(' ');
+      const rFirstInit = rParts[0][0].toLowerCase();
+      if (n2.startsWith(rFirstInit) || n2.endsWith(rFirstInit) || n2.includes(rFirstInit + '.')) {
+        return true;
+      }
+    }
+    return false;
+  });
+};
 ---
 
 <Layout title={`Co-AI | ${title}: ${subtitle}`}>
-  <div class="media-page">
+  <div class="media-page" style="display: flex; flex-direction: column; gap: 2rem; align-items: center;">
 
     <!-- Action bar (outside the card, not exported in PNG) -->
-    <div class="action-bar">
+    <div class="action-bar" style="width: 650px; align-self: center;">
       <a href="/engagement" class="back-link">
         <ArrowLeft size={16} /> Back to Public Engagement
       </a>
-
     </div>
 
     <!-- ═══════════════════════════════════════════
-         THE CARD — everything inside is exported
+         CARD 1: TALKS & EXTENDED ABSTRACTS
          ═══════════════════════════════════════════ -->
-    <div class="share-card" id="share-card">
+    <div class="share-card" id="share-card-1">
 
       <!-- Corner decorations (inline SVG, no external refs) -->
       <svg class="deco deco-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
@@ -88,7 +106,10 @@ const cardSlug = card.id;
       <!-- ── HEADER ── -->
       <div class="card-header">
         <div class="card-title-block">
-          <div class="card-event-line">{title}:</div>
+          <div class="card-event-line" style="display: flex; align-items: center; gap: 0.5rem;">
+            {title}:
+            <span class="card-count" style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;">1/2</span>
+          </div>
           <div class="card-subtitle-line">
             {subtitle.split(' ').map((word, i) => (
               <span class={`word word-${i}`}>{word} </span>
@@ -127,13 +148,18 @@ const cardSlug = card.id;
             <h2 class="talk-title">{talk.title.toUpperCase()}</h2>
             <p class="talk-presenter">
               {talk.type !== 'Workshop Co-organization' && <span>SPEAKER:&nbsp;</span>}
-              {(talk.presenterIds ?? []).map((pid, i) => (
-                <>
-                  <a href={`/team/${pid}`} class="presenter-link">{(talk.presenterIds ?? [])[i] ? talk.presenter.split(/\s*[,&]\s*/)[i] ?? talk.presenter : talk.presenter}</a>
-                  {i < (talk.presenterIds ?? []).length - 1 ? <span>,&nbsp;</span> : null}
-                </>
-              ))}
-              {(!talk.presenterIds || talk.presenterIds.length === 0) && <span>{talk.presenter}</span>}
+              {(talk.presenterIds ?? []).map((pid, i) => {
+                const name = (talk.presenterIds ?? [])[i] ? talk.presenter.split(/\s*[,&]\s*/)[i] ?? talk.presenter : talk.presenter;
+                const isTarget = name === 'Luigi Seminara' || name === 'Antonino Furnari';
+                return (
+                  <span key={pid}>
+                    <a href={`/team/${pid}`} class={`presenter-link ${isTarget ? 'underline' : ''}`}>{name}</a>{i < (talk.presenterIds ?? []).length - 1 ? <span>,&nbsp;</span> : null}
+                  </span>
+                );
+              })}
+              {(!talk.presenterIds || talk.presenterIds.length === 0) && (
+                <span class={(talk.presenter === 'Luigi Seminara' || talk.presenter === 'Antonino Furnari') ? 'underline font-[900]' : ''}>{talk.presenter}</span>
+              )}
             </p>
             <div class="talk-pills">
               {talk.workshopUrl
@@ -164,7 +190,7 @@ const cardSlug = card.id;
           </div>
 
           {talk.type !== 'Workshop Co-organization' && (
-            <!-- AR Person illustration (pure inline SVG, no external refs) -->
+            <!-- AR Person illustration -->
             <svg class="ar-person" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="40" cy="22" r="16" fill="#f4d7b0"/>
               <rect x="24" y="18" width="32" height="12" rx="6" fill="#4a90d9" opacity="0.85"/>
@@ -185,12 +211,162 @@ const cardSlug = card.id;
         </div>
       ))}
 
+      {extendedAbstracts.length > 0 && (
+        <div class="talk-card" style="margin-bottom: 0;">
+          <!-- Calendar icon -->
+          <div class="cal-icon" aria-hidden="true">
+            <div class="cal-rings"><span></span><span></span></div>
+            <div class="cal-body">
+              <span class="cal-month">JUN</span>
+              <span class="cal-day">3</span>
+            </div>
+          </div>
+
+          <div class="talk-content" style="flex: 1; min-width: 0;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.6rem;">
+              <span class="type-pill orange-bg" style="margin-bottom: 0;">EXTENDED ABSTRACTS</span>
+              <span class="type-pill teal-pill" style="margin-bottom: 0;">COLLABORATIONS WITH OTHER GROUPS</span>
+            </div>
+            <ul style="list-style-type: disc; padding-left: 1rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+              {extendedAbstracts.map(ea => {
+                const authorsList = ea.authors.split(/, | and /g).map(a => a.trim());
+                return (
+                  <li style="font-size: 0.65rem; font-weight: 700; color: #374151; line-height: 1.4;">
+                    {authorsList.map((author, index) => (
+                      <span>
+                        {isGroupMember(author) ? (
+                          <span class="underline decoration-gray-400 font-[900]">{author}</span>
+                        ) : (
+                          <span>{author}</span>
+                        )}
+                        {index < authorsList.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}, {ea.projectUrl ? (
+                      <a href={ea.projectUrl} target="_blank" rel="noopener" style="color: #1b285c; font-weight: 900; text-decoration: underline; text-underline-offset: 1px;">{ea.title}</a>
+                    ) : (
+                      <span style="color: #1b285c; font-weight: 900;">{ea.title}</span>
+                    )}, {ea.workshopUrl ? (
+                      <a href={ea.workshopUrl} target="_blank" rel="noopener" style="color: #2a9d8f; text-decoration: underline; font-weight: 800;">{ea.workshop}</a>
+                    ) : (
+                      <span style="color: #2a9d8f; font-weight: 800;">{ea.workshop}</span>
+                    )}, {ea.time} & {ea.room}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         CARD 2: PAPERS & SCHEDULE
+         ═══════════════════════════════════════════ -->
+    <div class="share-card" id="share-card-2">
+
+      <!-- Corner decorations (inline SVG, no external refs) -->
+      <svg class="deco deco-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
+        <path d="M10 60 Q 30 20 60 50 Q 80 70 110 40" stroke="#2a9d8f" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"/>
+        <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"/>
+        <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"/>
+      </svg>
+      <svg class="deco deco-tr" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
+        <path d="M10 40 Q 40 70 70 40 Q 90 20 115 55" stroke="#e86f38" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"/>
+        <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"/>
+      </svg>
+      <svg class="deco deco-bl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
+        <path d="M10 80 Q 40 50 70 80 Q 90 100 115 70" stroke="#7b5b9e" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"/>
+        <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"/>
+      </svg>
+      <svg class="deco deco-br" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
+        <path d="M10 50 Q 40 80 70 50 Q 90 30 115 65" stroke="#f4a24c" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"/>
+        <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"/>
+      </svg>
+
+      <!-- ── HEADER ── -->
+      <div class="card-header">
+        <div class="card-title-block">
+          <div class="card-event-line" style="display: flex; align-items: center; gap: 0.5rem;">
+            {title}:
+            <span class="card-count" style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;">2/2</span>
+          </div>
+          <div class="card-subtitle-line">
+            {subtitle.split(' ').map((word, i) => (
+              <span class={`word word-${i}`}>{word} </span>
+            ))}
+          </div>
+        </div>
+        <!-- Co-AI + institution logos top-right -->
+        <div class="header-logos">
+          {unict_logo && <img src={unict_logo} alt="University of Catania" class="hdr-logo unict" />}
+          {iplab_logo && <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />}
+          <div class="logo-vsep"></div>
+          <div class="co-ai-logo" aria-label="Co-AI" style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;">
+            <span style="color:#1b285c">C</span>
+            <span style="color:#2a9d8f">o</span>
+            <span style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block">-</span>
+            <span style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block">A</span>
+            <span style="color:#f4a24c;margin-left:2px">I</span>
+          </div>
+        </div>
+      </div>
+
       <!-- ── PAPERS & SCHEDULE ── -->
       {papers.map(paper => {
         const paperDates = [...new Set(paper.sessions.map(s => s.date))];
         return (
-          <div class="schedule-card">
+          <div class="schedule-card" style="margin-bottom: 0;">
             <h2 class="schedule-title">{paper.title.toUpperCase()}</h2>
+            {(() => {
+              const matchingPub = allPublications.find(p => p.data.title.toLowerCase().trim() === paper.title.toLowerCase().trim());
+              if (!matchingPub) return null;
+              const authorsList = matchingPub.data.authors.split(/, | and /g).map(a => a.trim());
+              const projectLink = matchingPub.data.links?.find(l => l.label.toLowerCase() === 'project')?.url;
+              const isViterbi = paper.title.toLowerCase().includes("viterbiplannet");
+              return (
+                <div style="text-align: center; font-size: 0.7rem; font-weight: 800; color: #4b5563; margin-top: -0.6rem; margin-bottom: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;">
+                  <div>
+                    {authorsList.map((author, index) => {
+                      const isDavide = author.toLowerCase().includes("davide molt");
+                      const displayName = isDavide ? "Davide Moltisanti (University of Bath)" : author;
+                      return (
+                        <span>
+                          {isDavide ? (
+                            <a href="https://www.davidemoltisanti.com/research/" target="_blank" rel="noopener" style="color: inherit; text-decoration: none; font-weight: 800;">{displayName}</a>
+                          ) : isGroupMember(author) ? (
+                            <span class="underline decoration-gray-400 font-[900]">{author}</span>
+                          ) : (
+                            <span>{author}</span>
+                          )}
+                          {index < authorsList.length - 1 ? ', ' : ''}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  {isViterbi && (
+                    <div style="margin-top: 0.1rem; margin-bottom: 0.15rem;">
+                      <a href="https://github.com/Gigi-G/ViterbiPlanNet" target="_blank" rel="noopener noreferrer" style="color: #2a9d8f; text-decoration: underline; font-weight: 800; font-size: 0.65rem;">
+                        https://github.com/Gigi-G/ViterbiPlanNet
+                      </a>
+                    </div>
+                  )}
+                  {isViterbi && (
+                    <p style="font-size: 0.65rem; text-align: justify; max-width: 38rem; line-height: 1.35; color: #4b5563; font-weight: 600; margin-top: 0.4rem; margin-bottom: 0.2rem; text-transform: none; letter-spacing: normal; word-spacing: normal;">
+                      In this paper we present ViterbiPlanNet to address the limitations of implicit learning in procedural planning by explicitly grounding knowledge in external structures. Rather than relying on massive models to blindly memorize task rules we introduce a differentiable layer that embeds a procedural knowledge graph directly into the end to end training process. This approach shifts the learning burden from brute force parameter scaling to structure aware optimization acting as an algorithmic guardrail. Ultimately we demonstrate that grounding neural networks in these external constraints drastically reduces computational costs improves sample efficiency and produces highly robust sequence predictions.
+                    </p>
+                  )}
+                  {projectLink && !isViterbi && (
+                    <a href={projectLink} target="_blank" rel="noopener" class="pill teal-pill" style="font-size: 0.55rem; padding: 2px 8px; border-radius: 999px; text-decoration: none; line-height: 1;">
+                      PROJECT PAGE
+                    </a>
+                  )}
+                </div>
+              );
+            })()}
 
             <!-- Timeline -->
             <div class="timeline">
@@ -234,14 +410,15 @@ const cardSlug = card.id;
                       {(s.presenterIds ?? s.presenters).map((pid, i) => {
                         const name = s.presenters[i] ?? pid;
                         const id = (s.presenterIds ?? [])[i] ?? null;
+                        const isTarget = name === 'Luigi Seminara' || name === 'Antonino Furnari';
                         return (
-                          <>
-                            {id
-                              ? <a href={`/team/${id}`} class="presenter-link">{name}</a>
-                              : <span>{name}</span>
-                            }
-                            {i < s.presenters.length - 1 ? <span class="sep">,&nbsp;</span> : null}
-                          </>
+                          <span key={i}>
+                            {id ? (
+                              <a href={`/team/${id}`} class={`presenter-link ${isTarget ? 'underline' : ''}`}>{name}</a>
+                            ) : (
+                              <span class={isTarget ? 'underline font-[900]' : ''}>{name}</span>
+                            )}{i < s.presenters.length - 1 ? <span class="sep">,&nbsp;</span> : null}
+                          </span>
                         );
                       })}
                     </div>
@@ -252,8 +429,8 @@ const cardSlug = card.id;
           </div>
         );
       })}
+    </div>
 
-    </div><!-- /share-card -->
   </div>
 </Layout>
 
@@ -313,7 +490,8 @@ const cardSlug = card.id;
     background: #fff;
     border-radius: 28px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-    max-width: 650px;
+    width: 650px;
+    aspect-ratio: 4 / 5;
     padding: 2rem 2.2rem 1.5rem;
     overflow: hidden;
     font-family: 'Nunito', sans-serif;
@@ -671,9 +849,11 @@ const cardSlug = card.id;
       width: 100vw !important;
       min-width: 0 !important;
       max-width: 100vw !important;
-      margin: 0 auto !important;
+      margin: 0 auto 2rem !important;
       padding: 0 !important;
       box-shadow: none !important;
+      page-break-after: always;
+      break-after: page;
     }
     /* Remove any print-unfriendly backgrounds or decorations if needed */
     .deco { display: none !important; }

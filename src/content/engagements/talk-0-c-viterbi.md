@@ -5,9 +5,10 @@ venue: "CVPR 2026 Workshops & Main Conference"
 type: "Oral & Poster Presentations"
 slides: ""
 upcoming: true
-speaker: ["Luigi Seminara", "Antonino Furnari"]
-speakerId: ["luigi_seminara", "antonino_furnari"]
+speaker: ["Luigi Seminara", "Davide Moltisanti (University of Bath)", "Antonino Furnari"]
+speakerId: ["luigi_seminara", "https://www.davidemoltisanti.com/research/", "antonino_furnari"]
 mediaCard: "cvpr2026"
+paperUrl: "/research/seminara2026viterbiplannet"
 ---
 Here is our presentation schedule for **ViterbiPlanNet** at CVPR 2026:
 
