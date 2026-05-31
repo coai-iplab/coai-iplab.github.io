@@ -12,9 +12,45 @@ import {
 } from "lucide-react";
 import { COLORS } from "../utils/constants";
 
+const order2026 = [
+  "viterbiplannet",
+  "task graph maximum likelihood estimation",
+  "ti-prego",
+  "integrating affordances and attention",
+  "proskill",
+  "ego-extra",
+  "online episodic memory visual query localization",
+  "exploring multimodal"
+];
+
 const publications = (await getCollection("publications"))
   .filter((pub) => pub.data.active !== false)
-  .sort((a, b) => b.data.year.localeCompare(a.data.year))
+  .sort((a, b) => {
+    // 1. Year comparison (descending)
+    const yearDiff = b.data.year.localeCompare(a.data.year);
+    if (yearDiff !== 0) return yearDiff;
+
+    // 2. Specific override for 2026
+    if (a.data.year === "2026") {
+      const titleA = a.data.title.toLowerCase();
+      const titleB = b.data.title.toLowerCase();
+      
+      const indexA = order2026.findIndex(prefix => titleA.includes(prefix));
+      const indexB = order2026.findIndex(prefix => titleB.includes(prefix));
+      
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+    }
+
+    // 3. General rule: journals go first, conferences after
+    const typeA = a.data.pub_type === "journal" ? 0 : 1;
+    const typeB = b.data.pub_type === "journal" ? 0 : 1;
+    if (typeA !== typeB) return typeA - typeB;
+
+    // 4. Default fallback: title alphabetical
+    return a.data.title.localeCompare(b.data.title);
+  })
   .map((pub) => ({
     ...pub,
     data: {

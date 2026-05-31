@@ -7,7 +7,7 @@ import { COLORS } from '../utils/constants';
 const allProjects = await getCollection('fundedProjects');
 const sortedProjects = allProjects.sort((a, b) => (a.data.priority || 0) - (b.data.priority || 0));
 
-const piProjects = sortedProjects.filter(p => p.data.role === 'Principal Investigator');
+const piProjects = sortedProjects.filter(p => p.data.role === 'Principal Investigator' || p.data.role === 'Associate PI');
 const jointProjects = sortedProjects.filter(p => p.data.role === 'Joint Leadership');
 ---
 
@@ -17,67 +17,52 @@ const jointProjects = sortedProjects.filter(p => p.data.role === 'Joint Leadersh
     {/* Page Header */}
     <div class="border-b border-gray-200 dark:border-gray-800 pb-10">
       <h1 class="text-5xl font-[900] text-gray-900 dark:text-white mb-6 tracking-tight">Funded Projects</h1>
-      <p class="text-xl text-gray-600 dark:text-gray-300 font-[600] leading-relaxed max-w-4xl">
-        Selected funded projects led or co-led by the group in egocentric vision, procedural understanding, applied memory, and human-centred AI.
-      </p>
     </div>
 
-    {/* Principal Investigator Section */}
+    {/* Principal Investigator Projects (without header) */}
     {piProjects.length > 0 && (
-      <div class="space-y-8">
-        <div class="border-b border-gray-100 dark:border-gray-800 pb-4 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 flex items-center justify-center">
-            <User size={20} />
-          </div>
-          <h2 class="text-3xl font-[900] text-gray-900 dark:text-white tracking-tight">Principal Investigator</h2>
-        </div>
-
-        <div class="grid grid-cols-1 gap-6">
-          {piProjects.map((project) => (
-            <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
-              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div class="space-y-2">
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-[800] uppercase tracking-wider bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900/30">
-                    <Shield size={12} /> {project.data.role}
-                  </span>
-                  <h3 class="text-2xl font-[900] text-gray-900 dark:text-white leading-snug">{project.data.title}</h3>
-                </div>
-                
-                {/* Meta details badge column */}
-                <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 dark:text-gray-400 font-mono">
-                  <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
-                    <Calendar size={12} /> {project.data.period}
-                  </span>
-                  <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
-                    <Briefcase size={12} /> {project.data.funding}
-                  </span>
-                </div>
+      <div class="grid grid-cols-1 gap-6">
+        {piProjects.map((project) => (
+          <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+              <div class="space-y-2">
+                <h3 class="text-2xl font-[900] text-gray-900 dark:text-white leading-snug">{project.data.title}</h3>
+                <p class="text-sm font-[800] text-gray-500 dark:text-gray-400">
+                  {project.data.role === 'Associate PI' ? 'Associate PI' : 'PI'}: <a href="/team/antonino_furnari" class="text-blue-600 dark:text-blue-450 hover:underline">Antonino Furnari</a>
+                </p>
               </div>
-
-              <p class="text-gray-600 dark:text-gray-300 font-[500] leading-relaxed text-base">{project.data.description}</p>
-
-              {project.data.partners && (
-                <div class="pt-4 border-t border-gray-50 dark:border-gray-850 flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400 font-[600]">
-                  <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
-                  <span>Partners: {project.data.partners}</span>
-                </div>
-              )}
-
-              {project.data.link && (
-                <div class="pt-2">
+              
+              {/* Meta details badge column */}
+              <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 dark:text-gray-400 font-mono">
+                <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
+                  <Calendar size={12} /> {project.data.period}
+                </span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
+                  <Briefcase size={12} /> {project.data.funding}
+                </span>
+                {project.data.link && (
                   <a 
                     href={project.data.link} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    class="inline-flex items-center gap-1 text-sm font-[900] text-blue-600 dark:text-blue-450 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                    class="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-xl border border-blue-100 dark:border-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                   >
-                    Project Link <LinkIcon size={14} />
+                    <LinkIcon size={12} /> Website
                   </a>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          ))}
-        </div>
+
+            <p class="text-gray-600 dark:text-gray-300 font-[500] leading-relaxed text-base">{project.data.description}</p>
+
+            {project.data.partners && (
+              <div class="pt-4 border-t border-gray-50 dark:border-gray-850 flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400 font-[600]">
+                <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
+                <span>Partners: {project.data.partners}</span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     )}
 
@@ -103,38 +88,35 @@ const jointProjects = sortedProjects.filter(p => p.data.role === 'Joint Leadersh
                 </div>
                 
                 {/* Meta details badge column */}
-                <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 dark:text-gray-400 font-mono">
-                  <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
-                    <Calendar size={12} /> {project.data.period}
-                  </span>
-                  <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
-                    <Briefcase size={12} /> {project.data.funding}
-                  </span>
-                </div>
-              </div>
-
-              <p class="text-gray-600 dark:text-gray-300 font-[500] leading-relaxed text-base">{project.data.description}</p>
-
-              {project.data.partners && (
-                <div class="pt-4 border-t border-gray-50 dark:border-gray-850 flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400 font-[600]">
-                  <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
-                  <span>Joint PIs: {project.data.partners}</span>
-                </div>
-              )}
-
-              {project.data.link && (
-                <div class="pt-2">
+              <div class="flex flex-wrap md:flex-col items-start gap-2 text-xs font-[800] text-gray-500 dark:text-gray-400 font-mono">
+                <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
+                  <Calendar size={12} /> {project.data.period}
+                </span>
+                <span class="inline-flex items-center gap-1 bg-gray-50 dark:bg-gray-950/40 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-gray-800">
+                  <Briefcase size={12} /> {project.data.funding}
+                </span>
+                {project.data.link && (
                   <a 
                     href={project.data.link} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    class="inline-flex items-center gap-1 text-sm font-[900] text-blue-600 dark:text-blue-450 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                    class="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 px-3 py-1.5 rounded-xl border border-blue-100 dark:border-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                   >
-                    Project Link <LinkIcon size={14} />
+                    <LinkIcon size={12} /> Website
                   </a>
-                </div>
-              )}
+                )}
+              </div>
             </div>
+
+            <p class="text-gray-600 dark:text-gray-300 font-[500] leading-relaxed text-base">{project.data.description}</p>
+
+            {project.data.partners && (
+              <div class="pt-4 border-t border-gray-50 dark:border-gray-850 flex items-start gap-2 text-sm text-gray-500 dark:text-gray-400 font-[600]">
+                <Building size={16} class="text-gray-400 mt-0.5 flex-shrink-0" />
+                <span>Joint PIs: {project.data.partners}</span>
+              </div>
+            )}
+          </div>
           ))}
         </div>
       </div>

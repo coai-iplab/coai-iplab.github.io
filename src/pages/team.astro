@@ -6,7 +6,34 @@ import { COLORS } from '../utils/constants';
 
 const allTeam = await getCollection('team');
 const teamMembers = allTeam.filter(m => !m.data.alumni && m.data.category !== 'Past Visitors');
-const alumniMembers = allTeam.filter(m => m.data.alumni && m.data.category !== 'Past Visitors');
+const getRoleRank = (roleStr: string) => {
+  const r = roleStr.toLowerCase();
+  if (r.includes("postdoc")) return 0;
+  if (r.includes("phd")) return 1;
+  if (r.includes("msc")) return 2;
+  if (r.includes("bsc")) return 3;
+  return 4;
+};
+
+const getEndYear = (member: any) => {
+  const text = `${member.data.years || ''} ${member.data.notes || ''} ${member.data.role || ''}`;
+  const matches = Array.from(text.matchAll(/\b(20\d{2})\b/g)).map(m => parseInt(m[1]));
+  if (matches.length === 0) return 0;
+  return Math.max(...matches);
+};
+
+const alumniMembers = allTeam
+  .filter(m => m.data.alumni && m.data.category !== 'Past Visitors')
+  .sort((a, b) => {
+    const rankA = getRoleRank(a.data.role);
+    const rankB = getRoleRank(b.data.role);
+    if (rankA !== rankB) return rankA - rankB;
+
+    const yearA = getEndYear(a);
+    const yearB = getEndYear(b);
+    return yearB - yearA;
+  });
+
 const pastVisitors = allTeam.filter(m => m.data.category === 'Past Visitors');
 
 const categories = ['Principal Investigator', 'PhD Students', 'Bachelor Students', 'Collaborators'];

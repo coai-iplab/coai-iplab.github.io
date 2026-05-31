@@ -4,7 +4,9 @@ authors: "Ivan Rodin, Tz-Ying Wu, Kyle Min, Sharath Nittur Sridhar, Antonino Fur
 venue: "IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)"
 year: "2025"
 pub_type: "conference"
-research_line: "memory"
+research_line:
+  - "memory"
+  - "datasets"
 teaser: "/images/teasers/Rodin2025EASG-Bench.png"
 links:
   - label: "PDF"

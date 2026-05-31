@@ -1,7 +1,7 @@
 ---
 name: Luca Strano
 alumni: true
-category: Past Visitors
+category: Collaborators
 role: MSc 2024-2025, BSc 2024
 affiliation: University of Catania
 link: '#'

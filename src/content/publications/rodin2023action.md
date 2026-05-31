@@ -6,6 +6,7 @@ authors: "Ivan Rodin, Antonino Furnari, Kyle Min, Subarna Tripathi, Giovanni Mar
 venue: "Conference on Computer Vision and Pattern Recognition (CVPR)"
 year: "2024"
 pub_type: "conference"
+research_line: "datasets"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2312.03391.pdf"

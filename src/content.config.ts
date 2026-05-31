@@ -115,7 +115,7 @@ const fundedProjects = defineCollection({
     title: z.string(),
     funding: z.string(),
     period: z.string(),
-    role: z.enum(['Principal Investigator', 'Joint Leadership']),
+    role: z.enum(['Principal Investigator', 'Joint Leadership', 'Associate PI']),
     partners: z.string().optional(),
     description: z.string(),
     link: z.string().optional(),

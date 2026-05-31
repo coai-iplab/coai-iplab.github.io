@@ -3,7 +3,7 @@ title: "Differentiable Task Graph Learning: Procedural Activity Representation a
 featured: true
 teaser: "/images/teasers/Seminara2025-arxiv-teaser.png"
 priority: 1
-authors: "Seminara, Luigi, Farinella, Giovanni Maria, Furnari, Antonino"
+authors: "Luigi Seminara, Giovanni Maria Farinella, Antonino Furnari"
 venue: "Advances in Neural Information Processing Systems"
 year: "2024"
 related: "seminara2026task"

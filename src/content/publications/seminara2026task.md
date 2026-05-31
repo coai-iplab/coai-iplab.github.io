@@ -1,6 +1,6 @@
 ---
 title: "Task Graph Maximum Likelihood Estimation for Procedural Activity Understanding in Egocentric Videos"
-authors: "Seminara, Luigi, Farinella, Giovanni Maria, Furnari, Antonino"
+authors: "Luigi Seminara, Giovanni Maria Farinella, Antonino Furnari"
 venue: "IEEE Transactions on Pattern Analysis and Machine Intelligence"
 year: "2026"
 teaser: "/images/teasers/Seminara2025-arxiv-teaser.png"

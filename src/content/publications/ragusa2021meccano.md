@@ -22,5 +22,5 @@ bibtex: |
   author = {Francesco Ragusa and Antonino Furnari and Salvatore Livatino and Giovanni Maria Farinella},
   title = {The MECCANO Dataset: Understanding Human-Object Interactions from Egocentric Videos in an Industrial-like Domain}
   }
-active: true
+active: false
 ---
