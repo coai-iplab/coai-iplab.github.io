@@ -10,7 +10,7 @@ links:
   - label: "Website"
     url: "https://maria-sanvil.github.io/Ego-METAS-website/"
   - label: "PDF"
-    url: "/EgoMETAS_arXiv.pdf"
+    url: "/publications/EgoMETAS_arXiv.pdf"
   - label: "Data"
     url: "https://huggingface.co/datasets/Ego-METAS/Ego-METAS"
 bibtex: |
