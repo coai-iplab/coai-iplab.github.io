@@ -11,7 +11,7 @@ links:
     url: "https://arxiv.org/abs/2605.31557"
   - label: "PDF"
     url: "https://arxiv.org/pdf/2605.31557"
-  - label: "Code"
+  - label: "Website"
     url: "https://saroo25.github.io/Egostream/"
 bibtex: |
   @article{forte2026egostream,

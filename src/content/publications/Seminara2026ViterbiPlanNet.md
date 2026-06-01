@@ -12,8 +12,10 @@ research_line: "procedural"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2603.04265"
-  - label: "Project"
+  - label: "Code"
     url: "https://github.com/Gigi-G/ViterbiPlanNet"
+  - label: "Website"
+    url: "https://gigi-g.github.io/ViterbiPlanNet/"
 bibtex: |
   @inproceedings{Seminara2026ViterbiPlanNet,
     year = { 2026 },

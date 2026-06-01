@@ -9,11 +9,7 @@ related: "flaborea2024PREGO"
 research_line: "skill"
 links:
   - label: "PDF"
-    url: "publications/Plini2026TIPREGO.pdf"
-  - label: "Project"
-    url: "https://www.sciencedirect.com/science/article/pii/S1077314225003364"
-  - label: "DOI"
-    url: "https://doi.org/10.1016/j.cviu.2025.104613"
+    url: "https://arxiv.org/pdf/2411.02570"
 bibtex: |
   @article{Plini2026TI-PREGO,
     author = { Leonardo Plini and Luca Scofano and Edoardo De Matteis and Guido Maria D’Amely di Melendugno and Alessandro Flaborea and Andrea Sanchietti and Giovanni Maria Farinella and Fabio Galasso and Antonino Furnari },

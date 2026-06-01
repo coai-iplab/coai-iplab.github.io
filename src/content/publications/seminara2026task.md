@@ -10,8 +10,8 @@ related: "seminara2024differentiable"
 pub_type: "journal"
 award: "1st Place Ego-Exo4D Procedure Understanding Challenge 2025"
 links:
-  - label: "DOI"
-    url: "https://doi.org/10.1109/TPAMI.2026.3689721"
+  - label: "Code"
+    url: "https://github.com/fpv-iplab/Differentiable-Task-Graph-Learning"
 bibtex: |
   @article{seminara2026task,
     author={Seminara, Luigi and Farinella, Giovanni Maria and Furnari, Antonino},
