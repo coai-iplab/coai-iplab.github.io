@@ -22,5 +22,5 @@ bibtex: |
   url = {http://epic-kitchens.github.io/2020-100},
   pdf = {http://arxiv.org/pdf/2006.13256.pdf},
   }
-active: true
+active: false
 ---

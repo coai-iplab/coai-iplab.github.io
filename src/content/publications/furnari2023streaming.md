@@ -24,5 +24,5 @@ bibtex: |
     journal = {Computer Vision and Image Understanding (CVIU)},
     author = {Antonino Furnari and Giovanni Maria Farinella},
   }
-active: true
+active: false
 ---

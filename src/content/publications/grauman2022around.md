@@ -21,5 +21,5 @@ bibtex: |
     pdf = { https://arxiv.org/pdf/2110.07058.pdf },
     url = { https://ego4d-data.org/ },
   }
-active: true
+active: false
 ---
