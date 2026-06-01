@@ -13,7 +13,7 @@ research_line: "procedural"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2406.01486.pdf"
-  - label: "Project"
+  - label: "Code"
     url: "https://github.com/fpv-iplab/Differentiable-Task-Graph-Learning"
 bibtex: |
   @inproceedings{seminara2024differentiable,

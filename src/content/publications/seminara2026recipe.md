@@ -4,7 +4,7 @@ authors: "Luigi Seminara, Antonino Furnari, Lorenzo Torresani"
 venue: "arXiv preprint arXiv:2605.19976"
 year: "2026"
 pub_type: "preprint"
-research_line: "anticipation"
+research_line: "skill"
 teaser: "/images/teasers/seminara2026recipe.svg"
 links:
   - label: "arXiv"

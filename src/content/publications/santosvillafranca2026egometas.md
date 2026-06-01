@@ -4,7 +4,7 @@ authors: "Maria Santos-Villafranca, Jesus Bermudez-Cameo, Alejandro Perez-Yus, G
 venue: "arXiv preprint (Coming Soon)"
 year: "2026"
 pub_type: "preprint"
-research_line: ["first-person", "datasets"]
+research_line: ["datasets", "memory"]
 teaser: "/images/teasers/santosvillafranca2026egometas.png"
 links:
   - label: "Website"

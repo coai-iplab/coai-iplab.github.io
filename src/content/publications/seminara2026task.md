@@ -4,6 +4,7 @@ authors: "Luigi Seminara, Giovanni Maria Farinella, Antonino Furnari"
 venue: "IEEE Transactions on Pattern Analysis and Machine Intelligence"
 year: "2026"
 teaser: "/images/teasers/Seminara2025-arxiv-teaser.png"
+research_line: "procedural"
 featured: false
 priority: 2
 related: "seminara2024differentiable"

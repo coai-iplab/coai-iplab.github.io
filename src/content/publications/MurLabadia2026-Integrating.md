@@ -3,6 +3,7 @@ title: "Integrating Affordances and Attention models for Short-Term Object Inter
 authors: "Lorenzo Mur-Labadia, Ruben Martinez-Cantin, Jose J. Guerrero, Giovanni Maria Farinella, Antonino Furnari"
 venue: "IEEE Transactions on Pattern Analysis and Machine Intelligence"
 year: "2026"
+research_line: "procedural"
 related: "mur-labadia2024aff-ttention"
 pub_type: "journal"
 award: "2nd Place Ego-Exo4D Procedure Understanding Challenge 2025"

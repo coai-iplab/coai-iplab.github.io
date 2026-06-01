@@ -6,7 +6,6 @@ year: "2026"
 teaser: "/images/teasers/flaborea2024PREGO.png"
 pub_type: "journal"
 related: "flaborea2024PREGO"
-research_line: "skill"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2411.02570"
