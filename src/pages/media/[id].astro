@@ -1,21 +1,29 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import { ArrowLeft, Download } from 'lucide-react';
-import { teamNames } from '../../utils/authors';
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { ArrowLeft, Download } from "lucide-react";
+import { teamNames } from "../../utils/authors";
 
 export async function getStaticPaths() {
-  const cards = await getCollection('mediaPresence');
-  return cards.map(card => ({
+  const cards = await getCollection("mediaPresence");
+  return cards.map((card) => ({
     params: { id: card.id },
     props: { card },
   }));
 }
 
 const { card } = Astro.props;
-const { title, subtitle, event, date, talks = [], papers = [], extendedAbstracts = [] } = card.data;
+const {
+  title,
+  subtitle,
+  event,
+  date,
+  talks = [],
+  papers = [],
+  extendedAbstracts = [],
+} = card.data;
 
-const allPublications = await getCollection('publications');
+const allPublications = await getCollection("publications");
 
 // Pre-fetch logos as base64 data URIs to avoid CORS issues during PNG export
 const fetchBase64 = async (url: string, mime: string) => {
@@ -23,51 +31,80 @@ const fetchBase64 = async (url: string, mime: string) => {
     const res = await fetch(url);
     if (!res.ok) return null;
     const buf = await res.arrayBuffer();
-    const b64 = Buffer.from(buf).toString('base64');
+    const b64 = Buffer.from(buf).toString("base64");
     return `data:${mime};base64,${b64}`;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 };
 
-const unict_logo = await fetchBase64('https://www.brand.unict.it/img/UniCT-Logo.webp', 'image/webp');
-const iplab_logo = await fetchBase64('https://fpv-iplab.github.io/WISH/img/iplablogo.png', 'image/png');
+const unict_logo = await fetchBase64(
+  "https://www.brand.unict.it/img/UniCT-Logo.webp",
+  "image/webp",
+);
+const iplab_logo = await fetchBase64(
+  "https://fpv-iplab.github.io/WISH/img/iplablogo.png",
+  "image/png",
+);
+const furnari_photo = await fetchBase64(
+  "https://antoninofurnari.github.io/images/profile.jpg",
+  "image/jpeg",
+);
+const seminara_photo = await fetchBase64(
+  "https://seminaraluigi.altervista.org/assets/Me_2_quadrata.jpg",
+  "image/jpeg",
+);
 
 // Unique dates for timeline (preserve order of first appearance)
-const allDates = papers.flatMap(p => p.sessions.map(s => s.date));
+const allDates = papers.flatMap((p) => p.sessions.map((s) => s.date));
 const uniqueDates = [...new Set(allDates)];
 
 // Color palette per unique date
-const palette = ['#e86f38', '#2a9d8f', '#f4a24c', '#7b5b9e', '#e76f51'];
+const palette = ["#e86f38", "#2a9d8f", "#f4a24c", "#7b5b9e", "#e76f51"];
 const dateColorMap: Record<string, string> = {};
-uniqueDates.forEach((d, i) => { dateColorMap[d] = palette[i % palette.length]; });
+uniqueDates.forEach((d, i) => {
+  dateColorMap[d] = palette[i % palette.length];
+});
 
 // Short date label — "June 3" → { month: "JUNE", day: "3" }
 const fmtDate = (d: string) => {
-  const parts = d.trim().split(' ');
-  return { month: parts[0]?.toUpperCase(), day: parts[1] ?? '' };
+  const parts = d.trim().split(" ");
+  return { month: parts[0]?.toUpperCase(), day: parts[1] ?? "" };
 };
 
 const cardSlug = card.id;
 
 const isGroupMember = (author: string) => {
-  return teamNames.some(r => {
+  return teamNames.some((r) => {
     const n1 = r.toLowerCase();
     const n2 = author.toLowerCase();
     if (n1 === n2) return true;
-    if (n2.includes(r.split(' ').pop()!.toLowerCase())) {
-      const rParts = r.split(' ');
+    if (n2.includes(r.split(" ").pop()!.toLowerCase())) {
+      const rParts = r.split(" ");
       const rFirstInit = rParts[0][0].toLowerCase();
-      if (n2.startsWith(rFirstInit) || n2.endsWith(rFirstInit) || n2.includes(rFirstInit + '.')) {
+      if (
+        n2.startsWith(rFirstInit) ||
+        n2.endsWith(rFirstInit) ||
+        n2.includes(rFirstInit + ".")
+      ) {
         return true;
       }
     }
     return false;
   });
 };
+
+const egoExtra = extendedAbstracts.find((ea) => ea.title.includes("Ego-EXTRA"));
+const otherAbstracts = extendedAbstracts.filter(
+  (ea) => !ea.title.includes("Ego-EXTRA"),
+);
 ---
 
 <Layout title={`Co-AI | ${title}: ${subtitle}`}>
-  <div class="media-page" style="display: flex; flex-direction: column; gap: 2rem; align-items: center;">
-
+  <div
+    class="media-page"
+    style="display: flex; flex-direction: column; gap: 2rem; align-items: center;"
+  >
     <!-- Action bar (outside the card, not exported in PNG) -->
     <div class="action-bar" style="width: 650px; align-self: center;">
       <a href="/engagement" class="back-link">
@@ -76,382 +113,1587 @@ const isGroupMember = (author: string) => {
     </div>
 
     <!-- ═══════════════════════════════════════════
-         CARD 1: TALKS & EXTENDED ABSTRACTS
+         DESKTOP CARDS (Hidden on mobile)
          ═══════════════════════════════════════════ -->
-    <div class="share-card" id="share-card-1">
+    <div class="desktop-only-cards">
+      <!-- CARD 1: TALKS & EXTENDED ABSTRACTS -->
+      <div class="share-card" id="share-card-1">
+        <!-- Corner decorations -->
+        <svg
+          class="deco deco-tl"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 60 Q 30 20 60 50 Q 80 70 110 40"
+            stroke="#2a9d8f"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"></circle>
+          <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"></circle>
+          <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"></circle>
+        </svg>
+        <svg
+          class="deco deco-tr"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 40 Q 40 70 70 40 Q 90 20 115 55"
+            stroke="#e86f38"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"></circle>
+          <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"></circle>
+        </svg>
+        <svg
+          class="deco deco-bl"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 80 Q 40 50 70 80 Q 90 100 115 70"
+            stroke="#7b5b9e"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"></circle>
+          <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"></circle>
+        </svg>
+        <svg
+          class="deco deco-br"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 50 Q 40 80 70 50 Q 90 30 115 65"
+            stroke="#f4a24c"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"></circle>
+          <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"></circle>
+        </svg>
 
-      <!-- Corner decorations (inline SVG, no external refs) -->
-      <svg class="deco deco-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 60 Q 30 20 60 50 Q 80 70 110 40" stroke="#2a9d8f" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"/>
-        <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"/>
-        <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"/>
-      </svg>
-      <svg class="deco deco-tr" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 40 Q 40 70 70 40 Q 90 20 115 55" stroke="#e86f38" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"/>
-        <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"/>
-      </svg>
-      <svg class="deco deco-bl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 80 Q 40 50 70 80 Q 90 100 115 70" stroke="#7b5b9e" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"/>
-        <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"/>
-      </svg>
-      <svg class="deco deco-br" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 50 Q 40 80 70 50 Q 90 30 115 65" stroke="#f4a24c" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"/>
-        <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"/>
-      </svg>
-
-      <!-- ── HEADER ── -->
-      <div class="card-header">
-        <div class="card-title-block">
-          <div class="card-event-line" style="display: flex; align-items: center; gap: 0.5rem;">
-            {title}:
-            <span class="card-count" style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;">1/2</span>
+        <div class="card-header">
+          <div class="card-title-block">
+            <div
+              class="card-event-line"
+              style="display: flex; align-items: center; gap: 0.5rem;"
+            >
+              {title}:
+              <span
+                class="card-count"
+                style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;"
+                >1/2</span
+              >
+            </div>
+            <div class="card-subtitle-line">
+              {
+                subtitle
+                  .split(" ")
+                  .map((word, i) => (
+                    <span class={`word word-${i}`}>{word} </span>
+                  ))
+              }
+            </div>
           </div>
-          <div class="card-subtitle-line">
-            {subtitle.split(' ').map((word, i) => (
-              <span class={`word word-${i}`}>{word} </span>
-            ))}
+          <div class="header-logos">
+            {
+              unict_logo && (
+                <img
+                  src={unict_logo}
+                  alt="University of Catania"
+                  class="hdr-logo unict"
+                />
+              )
+            }
+            {
+              iplab_logo && (
+                <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />
+              )
+            }
+            <div class="logo-vsep"></div>
+            <div
+              style="display: flex; flex-direction: column; align-items: center; gap: 1px;"
+            >
+              <div
+                class="co-ai-logo"
+                aria-label="Co-AI"
+                style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;"
+              >
+                <span style="color:#1b285c">C</span>
+                <span style="color:#2a9d8f">o</span>
+                <span
+                  style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block"
+                  >-</span
+                >
+                <span
+                  style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block"
+                  >A</span
+                >
+                <span style="color:#f4a24c;margin-left:2px">I</span>
+              </div>
+              <a
+                href="https://coai-iplab.github.io"
+                target="_blank"
+                rel="noopener"
+                style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;"
+              >
+                coai-iplab.github.io
+              </a>
+            </div>
           </div>
         </div>
-        <!-- Co-AI + institution logos top-right -->
-        <div class="header-logos">
-          {unict_logo && <img src={unict_logo} alt="University of Catania" class="hdr-logo unict" />}
-          {iplab_logo && <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />}
-          <div class="logo-vsep"></div>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 1px;">
-            <div class="co-ai-logo" aria-label="Co-AI" style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;">
-              <span style="color:#1b285c">C</span>
-              <span style="color:#2a9d8f">o</span>
-              <span style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block">-</span>
-              <span style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block">A</span>
-              <span style="color:#f4a24c;margin-left:2px">I</span>
-            </div>
-            <a href="https://coai-iplab.github.io" target="_blank" rel="noopener" style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;">
-              coai-iplab.github.io
+
+        <div
+          class="attendance-box"
+          style="background: #eef2f6; border-radius: 20px; padding: 0.8rem 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin-bottom: 1rem; position: relative; z-index: 1;"
+        >
+          <span
+            style="font-size: 0.85rem; font-weight: 900; color: #1b285c; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 100%;"
+            >FIND US AT CVPR!</span
+          >
+          <div
+            style="display: flex; gap: 1.5rem; align-items: center; justify-content: center; width: 100%;"
+          >
+            <a
+              href="http://antoninofurnari.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit;"
+            >
+              {
+                furnari_photo ? (
+                  <img
+                    src={furnari_photo}
+                    alt="Antonino Furnari"
+                    style="width: 4.8rem; height: 4.8rem; border-radius: 50%; object-fit: cover; border: 2.2px solid #2a9d8f; transition: transform 0.2s;"
+                    class="hover:scale-105"
+                  />
+                ) : (
+                  <div style="width: 4.8rem; height: 4.8rem; border-radius: 50%; background: #2a9d8f; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem;">
+                    AF
+                  </div>
+                )
+              }
+              <span
+                style="font-size: 0.95rem; font-weight: 800; color: #374151; text-decoration: underline; text-underline-offset: 2px;"
+                >Antonino Furnari</span
+              >
+            </a>
+            <a
+              href="https://seminaraluigi.altervista.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit;"
+            >
+              {
+                seminara_photo ? (
+                  <img
+                    src={seminara_photo}
+                    alt="Luigi Seminara"
+                    style="width: 4.8rem; height: 4.8rem; border-radius: 50%; object-fit: cover; border: 2px solid #7b5b9e; transition: transform 0.2s;"
+                    class="hover:scale-105"
+                  />
+                ) : (
+                  <div style="width: 4.8rem; height: 4.8rem; border-radius: 50%; background: #7b5b9e; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem;">
+                    LS
+                  </div>
+                )
+              }
+              <span
+                style="font-size: 0.95rem; font-weight: 800; color: #374151; text-decoration: underline; text-underline-offset: 2px;"
+                >Luigi Seminara</span
+              >
             </a>
           </div>
         </div>
-      </div>
 
-      <!-- ── INVITED TALKS ── -->
-      {talks.map(talk => (
-        <div class="talk-card">
-          <!-- Calendar icon -->
-          <div class="cal-icon" aria-hidden="true">
-            <div class="cal-rings"><span></span><span></span></div>
-            <div class="cal-body">
-              <span class="cal-month">{fmtDate(talk.date).month}</span>
-              <span class="cal-day">{fmtDate(talk.date).day}</span>
-            </div>
-          </div>
-
-          <div class="talk-content">
-            <span class="type-pill orange-bg">{talk.type.toUpperCase()}</span>
-            <h2 class="talk-title">{talk.title.toUpperCase()}</h2>
-            <p class="talk-presenter">
-              {talk.type !== 'Workshop Co-organization' && <span>SPEAKER:&nbsp;</span>}
-              {(talk.presenterIds ?? []).map((pid, i) => {
-                const name = (talk.presenterIds ?? [])[i] ? talk.presenter.split(/\s*[,&]\s*/)[i] ?? talk.presenter : talk.presenter;
-                const isTarget = name === 'Luigi Seminara' || name === 'Antonino Furnari';
-                return (
-                  <span key={pid}>
-                    <a href={`/team/${pid}`} class={`presenter-link ${isTarget ? 'underline' : ''}`}>{name}</a>{i < (talk.presenterIds ?? []).length - 1 ? <span>,&nbsp;</span> : null}
+        {
+          talks.map((talk) => (
+            <div class="talk-card">
+              <div class="cal-icon" aria-hidden="true">
+                <div class="cal-rings">
+                  <>
+                    <span />
+                    <span />
+                  </>
+                </div>
+                <div class="cal-body">
+                  <span class="cal-month">{fmtDate(talk.date).month}</span>
+                  <span class="cal-day">{fmtDate(talk.date).day}</span>
+                </div>
+              </div>
+              <div class="talk-content">
+                <span class="type-pill orange-bg">
+                  {talk.type.toUpperCase()}
+                </span>
+                <h2 class="talk-title">{talk.title.toUpperCase()}</h2>
+                <p class="talk-presenter">
+                  {talk.type !== "Workshop Co-organization" && (
+                    <span>SPEAKER:&nbsp;</span>
+                  )}
+                  {(talk.presenterIds ?? []).map((pid, i) => {
+                    const name = (talk.presenterIds ?? [])[i]
+                      ? (talk.presenter.split(/\s*[,&]\s*/)[i] ??
+                        talk.presenter)
+                      : talk.presenter;
+                    const isTarget =
+                      name === "Luigi Seminara" || name === "Antonino Furnari";
+                    return (
+                      <span key={pid}>
+                        <a
+                          href={`/team/${pid}`}
+                          class={`presenter-link ${isTarget ? "underline" : ""}`}
+                        >
+                          {name}
+                        </a>
+                        {i < (talk.presenterIds ?? []).length - 1 ? (
+                          <span>,&nbsp;</span>
+                        ) : null}
+                      </span>
+                    );
+                  })}
+                  {(!talk.presenterIds || talk.presenterIds.length === 0) && (
+                    <span
+                      class={
+                        talk.presenter === "Luigi Seminara" ||
+                        talk.presenter === "Antonino Furnari"
+                          ? "underline font-[900]"
+                          : ""
+                      }
+                    >
+                      {talk.presenter}
+                    </span>
+                  )}
+                </p>
+                <div class="talk-pills">
+                  {talk.type !== "Workshop Co-organization" &&
+                    (talk.workshopUrl ? (
+                      <a
+                        href={talk.workshopUrl}
+                        target="_blank"
+                        rel="noopener"
+                        class="pill teal-pill"
+                      >
+                        WORKSHOP&nbsp;|&nbsp;
+                        {talk.workshop.replace(" Workshop", "").toUpperCase()}
+                      </a>
+                    ) : (
+                      <span class="pill teal-pill">
+                        WORKSHOP&nbsp;|&nbsp;
+                        {talk.workshop.replace(" Workshop", "").toUpperCase()}
+                      </span>
+                    ))}
+                  <span class="pill purple-pill">TIME:&nbsp;{talk.time}</span>
+                  <span class="pill orange-pill">
+                    LOCATION:&nbsp;{talk.room.toUpperCase()}
                   </span>
-                );
-              })}
-              {(!talk.presenterIds || talk.presenterIds.length === 0) && (
-                <span class={(talk.presenter === 'Luigi Seminara' || talk.presenter === 'Antonino Furnari') ? 'underline font-[900]' : ''}>{talk.presenter}</span>
+                </div>
+                {talk.challenges && talk.challenges.length > 0 && (
+                  <div class="talk-challenges">
+                    <span class="challenges-title">
+                      CHALLENGES CO-ORGANIZED AT THE WORKSHOP:
+                    </span>
+                    <ul class="challenges-list">
+                      {talk.challenges.map((ch) => (
+                        <li>
+                          <span class="challenge-name">{ch.name}</span>
+                          <span class="challenge-sep"> - </span>
+                          {ch.organizerId ? (
+                            <a
+                              href={`/team/${ch.organizerId}`}
+                              class="challenge-organizer"
+                            >
+                              {ch.organizer}
+                            </a>
+                          ) : (
+                            <span class="challenge-organizer">
+                              {ch.organizer}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              {talk.type !== "Workshop Co-organization" && (
+                <svg
+                  class="ar-person"
+                  viewBox="0 0 80 100"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="40" cy="22" r="16" fill="#f4d7b0" />
+                  <rect
+                    x="24"
+                    y="18"
+                    width="32"
+                    height="12"
+                    rx="6"
+                    fill="#4a90d9"
+                    opacity="0.85"
+                  />
+                  <rect
+                    x="22"
+                    y="20"
+                    width="8"
+                    height="8"
+                    rx="3"
+                    fill="#4a90d9"
+                  />
+                  <rect
+                    x="50"
+                    y="20"
+                    width="8"
+                    height="8"
+                    rx="3"
+                    fill="#4a90d9"
+                  />
+                  <rect
+                    x="28"
+                    y="20"
+                    width="10"
+                    height="8"
+                    rx="2"
+                    fill="#87ceeb"
+                    opacity="0.7"
+                  />
+                  <rect
+                    x="42"
+                    y="20"
+                    width="10"
+                    height="8"
+                    rx="2"
+                    fill="#87ceeb"
+                    opacity="0.7"
+                  />
+                  <rect
+                    x="22"
+                    y="22"
+                    width="2"
+                    height="4"
+                    rx="1"
+                    fill="#1b285c"
+                  />
+                  <rect
+                    x="56"
+                    y="22"
+                    width="2"
+                    height="4"
+                    rx="1"
+                    fill="#1b285c"
+                  />
+                  <rect x="18" y="22" width="4" height="2" rx="1" fill="#888" />
+                  <rect x="58" y="22" width="4" height="2" rx="1" fill="#888" />
+                  <path d="M30 38 Q40 55 50 38" fill="#4caf82" stroke="none" />
+                  <rect
+                    x="28"
+                    y="38"
+                    width="24"
+                    height="30"
+                    rx="4"
+                    fill="#4caf82"
+                  />
+                  <path
+                    d="M28 55 L15 70"
+                    stroke="#f4d7b0"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M52 55 L65 70"
+                    stroke="#f4d7b0"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                  />
+                </svg>
               )}
-            </p>
-            <div class="talk-pills">
-              {talk.workshopUrl
-                ? <a href={talk.workshopUrl} target="_blank" rel="noopener" class="pill teal-pill">WORKSHOP&nbsp;|&nbsp;{talk.workshop.replace(' Workshop','').toUpperCase()}</a>
-                : <span class="pill teal-pill">WORKSHOP&nbsp;|&nbsp;{talk.workshop.replace(' Workshop','').toUpperCase()}</span>
-              }
-              <span class="pill purple-pill">TIME:&nbsp;{talk.time}</span>
-              <span class="pill orange-pill">LOCATION:&nbsp;{talk.room.toUpperCase()}</span>
             </div>
-            {talk.challenges && talk.challenges.length > 0 && (
-              <div class="talk-challenges">
-                <span class="challenges-title">CHALLENGES CO-ORGANIZED AT THE WORKSHOP:</span>
-                <ul class="challenges-list">
-                  {talk.challenges.map(ch => (
-                    <li>
-                      <span class="challenge-name">{ch.name}</span>
-                      <span class="challenge-sep"> - </span>
-                      {ch.organizerId ? (
-                        <a href={`/team/${ch.organizerId}`} class="challenge-organizer">{ch.organizer}</a>
-                      ) : (
-                        <span class="challenge-organizer">{ch.organizer}</span>
-                      )}
-                    </li>
-                  ))}
+          ))
+        }
+
+        {
+          extendedAbstracts.length > 0 && (
+            <div class="talk-card" style="margin-bottom: 0;">
+              <div class="cal-icon" aria-hidden="true">
+                <div class="cal-rings">
+                  <>
+                    <span />
+                    <span />
+                  </>
+                </div>
+                <div class="cal-body">
+                  <span class="cal-month">JUN</span>
+                  <span class="cal-day">3</span>
+                </div>
+              </div>
+              <div class="talk-content" style="flex: 1; min-width: 0;">
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.6rem;">
+                  <span class="type-pill orange-bg" style="margin-bottom: 0;">
+                    EXTENDED ABSTRACTS
+                  </span>
+                  <span class="type-pill teal-pill" style="margin-bottom: 0;">
+                    COLLABORATIONS WITH OTHER GROUPS
+                  </span>
+                </div>
+                <ul style="list-style-type: disc; padding-left: 1rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                  {extendedAbstracts.map((ea) => {
+                    const authorsList = ea.authors
+                      .split(/, | and /g)
+                      .map((a) => a.trim());
+                    return (
+                      <li style="font-size: 0.65rem; font-weight: 700; color: #374151; line-height: 1.4;">
+                        {authorsList.map((author, index) => (
+                          <span>
+                            {isGroupMember(author) ? (
+                              <span class="underline decoration-gray-400 font-[900]">
+                                {author}
+                              </span>
+                            ) : (
+                              <span>{author}</span>
+                            )}
+                            {index < authorsList.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                        ,{" "}
+                        {ea.projectUrl ? (
+                          <a
+                            href={ea.projectUrl}
+                            target="_blank"
+                            rel="noopener"
+                            style="color: #1b285c; font-weight: 900; text-decoration: underline; text-underline-offset: 1px;"
+                          >
+                            {ea.title}
+                          </a>
+                        ) : (
+                          <span style="color: #1b285c; font-weight: 900;">
+                            {ea.title}
+                          </span>
+                        )}
+                        ,{" "}
+                        {ea.workshopUrl ? (
+                          <a
+                            href={ea.workshopUrl}
+                            target="_blank"
+                            rel="noopener"
+                            style="color: #2a9d8f; text-decoration: underline; font-weight: 800;"
+                          >
+                            {ea.workshop}
+                          </a>
+                        ) : (
+                          <span style="color: #2a9d8f; font-weight: 800;">
+                            {ea.workshop}
+                          </span>
+                        )}
+                        , {ea.time} & {ea.room}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
-            )}
-          </div>
+            </div>
+          )
+        }
+      </div>
 
-          {talk.type !== 'Workshop Co-organization' && (
-            <!-- AR Person illustration -->
-            <svg class="ar-person" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="40" cy="22" r="16" fill="#f4d7b0"/>
-              <rect x="24" y="18" width="32" height="12" rx="6" fill="#4a90d9" opacity="0.85"/>
-              <rect x="22" y="20" width="8" height="8" rx="3" fill="#4a90d9"/>
-              <rect x="50" y="20" width="8" height="8" rx="3" fill="#4a90d9"/>
-              <rect x="28" y="20" width="10" height="8" rx="2" fill="#87ceeb" opacity="0.7"/>
-              <rect x="42" y="20" width="10" height="8" rx="2" fill="#87ceeb" opacity="0.7"/>
-              <rect x="22" y="22" width="2" height="4" rx="1" fill="#1b285c"/>
-              <rect x="56" y="22" width="2" height="4" rx="1" fill="#1b285c"/>
-              <rect x="18" y="22" width="4" height="2" rx="1" fill="#888"/>
-              <rect x="58" y="22" width="4" height="2" rx="1" fill="#888"/>
-              <path d="M30 38 Q40 55 50 38" fill="#4caf82" stroke="none"/>
-              <rect x="28" y="38" width="24" height="30" rx="4" fill="#4caf82"/>
-              <path d="M28 55 L15 70" stroke="#f4d7b0" stroke-width="5" stroke-linecap="round"/>
-              <path d="M52 55 L65 70" stroke="#f4d7b0" stroke-width="5" stroke-linecap="round"/>
-            </svg>
-          )}
+      <!-- CARD 2: PAPERS & SCHEDULE -->
+      <div class="share-card" id="share-card-2">
+        <!-- Corner decorations -->
+        <svg
+          class="deco deco-tl"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 60 Q 30 20 60 50 Q 80 70 110 40"
+            stroke="#2a9d8f"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"></circle>
+          <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"></circle>
+          <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"></circle>
+        </svg>
+        <svg
+          class="deco deco-tr"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 40 Q 40 70 70 40 Q 90 20 115 55"
+            stroke="#e86f38"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"></circle>
+          <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"></circle>
+        </svg>
+        <svg
+          class="deco deco-bl"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 80 Q 40 50 70 80 Q 90 100 115 70"
+            stroke="#7b5b9e"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"></circle>
+          <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"></circle>
+        </svg>
+        <svg
+          class="deco deco-br"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="opacity:0.3;"
+        >
+          <path
+            d="M10 50 Q 40 80 70 50 Q 90 30 115 65"
+            stroke="#f4a24c"
+            stroke-width="5"
+            stroke-linecap="round"
+            fill="none"></path>
+          <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"></circle>
+          <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"></circle>
+        </svg>
+
+        <div class="card-header">
+          <div class="card-title-block">
+            <div
+              class="card-event-line"
+              style="display: flex; align-items: center; gap: 0.5rem;"
+            >
+              {title}:
+              <span
+                class="card-count"
+                style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;"
+                >2/2</span
+              >
+            </div>
+            <div class="card-subtitle-line">
+              {
+                subtitle
+                  .split(" ")
+                  .map((word, i) => (
+                    <span class={`word word-${i}`}>{word} </span>
+                  ))
+              }
+            </div>
+          </div>
+          <div class="header-logos">
+            {
+              unict_logo && (
+                <img
+                  src={unict_logo}
+                  alt="University of Catania"
+                  class="hdr-logo unict"
+                />
+              )
+            }
+            {
+              iplab_logo && (
+                <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />
+              )
+            }
+            <div class="logo-vsep"></div>
+            <div
+              style="display: flex; flex-direction: column; align-items: center; gap: 1px;"
+            >
+              <div
+                class="co-ai-logo"
+                aria-label="Co-AI"
+                style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;"
+              >
+                <span style="color:#1b285c">C</span>
+                <span style="color:#2a9d8f">o</span>
+                <span
+                  style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block"
+                  >-</span
+                >
+                <span
+                  style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block"
+                  >A</span
+                >
+                <span style="color:#f4a24c;margin-left:2px">I</span>
+              </div>
+              <a
+                href="https://coai-iplab.github.io"
+                target="_blank"
+                rel="noopener"
+                style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;"
+              >
+                coai-iplab.github.io
+              </a>
+            </div>
+          </div>
         </div>
-      ))}
 
-      {extendedAbstracts.length > 0 && (
-        <div class="talk-card" style="margin-bottom: 0;">
-          <!-- Calendar icon -->
-          <div class="cal-icon" aria-hidden="true">
-            <div class="cal-rings"><span></span><span></span></div>
-            <div class="cal-body">
-              <span class="cal-month">JUN</span>
-              <span class="cal-day">3</span>
-            </div>
-          </div>
+        {
+          papers.map((paper) => {
+            const paperDates = [...new Set(paper.sessions.map((s) => s.date))];
+            return (
+              <div class="schedule-card" style="margin-bottom: 0;">
+                <h2 class="schedule-title">{paper.title.toUpperCase()}</h2>
+                {(() => {
+                  const matchingPub = allPublications.find(
+                    (p) =>
+                      p.data.title.toLowerCase().trim() ===
+                      paper.title.toLowerCase().trim(),
+                  );
+                  if (!matchingPub) return null;
+                  const authorsList = matchingPub.data.authors
+                    .split(/, | and /g)
+                    .map((a) => a.trim());
+                  const projectLink = matchingPub.data.links?.find(
+                    (l) => l.label.toLowerCase() === "project",
+                  )?.url;
+                  const isViterbi = paper.title
+                    .toLowerCase()
+                    .includes("viterbiplannet");
+                  return (
+                    <div style="text-align: center; font-size: 0.7rem; font-weight: 800; color: #4b5563; margin-top: -0.6rem; margin-bottom: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;">
+                      <div>
+                        {authorsList.map((author, index) => {
+                          const isDavide = author
+                            .toLowerCase()
+                            .includes("davide molt");
+                          const displayName = isDavide
+                            ? "Davide Moltisanti (University of Bath)"
+                            : author;
+                          return (
+                            <span>
+                              {isDavide ? (
+                                <a
+                                  href="https://www.davidemoltisanti.com/research/"
+                                  target="_blank"
+                                  rel="noopener"
+                                  style="color: inherit; text-decoration: none; font-weight: 800;"
+                                >
+                                  {displayName}
+                                </a>
+                              ) : isGroupMember(author) ? (
+                                <span class="underline decoration-gray-400 font-[900]">
+                                  {author}
+                                </span>
+                              ) : (
+                                <span>{author}</span>
+                              )}
+                              {index < authorsList.length - 1 ? ", " : ""}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      {isViterbi && (
+                        <div style="margin-top: 0.1rem; margin-bottom: 0.15rem;">
+                          <a
+                            href="https://github.com/Gigi-G/ViterbiPlanNet"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="color: #2a9d8f; text-decoration: underline; font-weight: 800; font-size: 0.65rem;"
+                          >
+                            https://github.com/Gigi-G/ViterbiPlanNet
+                          </a>
+                        </div>
+                      )}
+                      {isViterbi && (
+                        <p
+                          class="viterbi-abstract"
+                          style="font-size: 0.65rem; text-align: justify; max-width: 38rem; line-height: 1.35; color: #4b5563; font-weight: 600; margin-top: 0.4rem; margin-bottom: 0.2rem; text-transform: none; letter-spacing: normal; word-spacing: normal;"
+                        >
+                          In this paper we present ViterbiPlanNet to address the
+                          limitations of implicit learning in procedural
+                          planning by explicitly grounding knowledge in external
+                          structures. Rather than relying on massive models to
+                          blindly memorize task rules we introduce a
+                          differentiable layer that embeds a procedural
+                          knowledge graph directly into the end to end training
+                          process. This approach shifts the learning burden from
+                          brute force parameter scaling to structure aware
+                          optimization acting as an algorithmic guardrail.
+                          Ultimately we demonstrate that grounding neural
+                          networks in these external constraints drastically
+                          reduces computational costs improves sample efficiency
+                          and produces highly robust sequence predictions.
+                        </p>
+                      )}
+                      {projectLink && !isViterbi && (
+                        <a
+                          href={projectLink}
+                          target="_blank"
+                          rel="noopener"
+                          class="pill teal-pill"
+                          style="font-size: 0.55rem; padding: 2px 8px; border-radius: 999px; text-decoration: none; line-height: 1;"
+                        >
+                          PROJECT PAGE
+                        </a>
+                      )}
+                    </div>
+                  );
+                })()}
 
-          <div class="talk-content" style="flex: 1; min-width: 0;">
-            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.6rem;">
-              <span class="type-pill orange-bg" style="margin-bottom: 0;">EXTENDED ABSTRACTS</span>
-              <span class="type-pill teal-pill" style="margin-bottom: 0;">COLLABORATIONS WITH OTHER GROUPS</span>
-            </div>
-            <ul style="list-style-type: disc; padding-left: 1rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-              {extendedAbstracts.map(ea => {
-                const authorsList = ea.authors.split(/, | and /g).map(a => a.trim());
-                return (
-                  <li style="font-size: 0.65rem; font-weight: 700; color: #374151; line-height: 1.4;">
-                    {authorsList.map((author, index) => (
-                      <span>
-                        {isGroupMember(author) ? (
-                          <span class="underline decoration-gray-400 font-[900]">{author}</span>
-                        ) : (
-                          <span>{author}</span>
+                <div class="timeline">
+                  {paperDates.map((d, i) => {
+                    const { month, day } = fmtDate(d);
+                    const color = dateColorMap[d];
+                    return (
+                      <div class="tl-item">
+                        {i > 0 && (
+                          <div
+                            class="tl-line"
+                            style={`background: linear-gradient(to right, ${dateColorMap[paperDates[i - 1]]}, ${color})`}
+                          />
                         )}
-                        {index < authorsList.length - 1 ? ', ' : ''}
-                      </span>
-                    ))}, {ea.projectUrl ? (
-                      <a href={ea.projectUrl} target="_blank" rel="noopener" style="color: #1b285c; font-weight: 900; text-decoration: underline; text-underline-offset: 1px;">{ea.title}</a>
-                    ) : (
-                      <span style="color: #1b285c; font-weight: 900;">{ea.title}</span>
-                    )}, {ea.workshopUrl ? (
-                      <a href={ea.workshopUrl} target="_blank" rel="noopener" style="color: #2a9d8f; text-decoration: underline; font-weight: 800;">{ea.workshop}</a>
-                    ) : (
-                      <span style="color: #2a9d8f; font-weight: 800;">{ea.workshop}</span>
-                    )}, {ea.time} & {ea.room}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-      )}
+                        <div class="tl-dot" style={`background: ${color}`}>
+                          <span class="tl-month">{month}</span>
+                          <span class="tl-day">{day}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div class="sessions">
+                  {paper.sessions.map((s, si) => {
+                    const { month, day } = fmtDate(s.date);
+                    const color = dateColorMap[s.date];
+                    const isOral = s.type === "Oral";
+                    return (
+                      <div
+                        class={`session-row ${si % 2 === 0 ? "row-even" : "row-odd"}`}
+                      >
+                        <div class="session-meta-row">
+                          <div class="s-date" style={`background: ${color}`}>
+                            <span class="s-month">{month}</span>
+                            <span class="s-day">{day}</span>
+                          </div>
+                          <div class="s-time">
+                            {s.time.split(/\s*-\s*/).map((t, ti) => (
+                              <span class={`time-part time-part-${ti}`}>
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                          <div class={`s-type ${isOral ? "oral" : "poster"}`}>
+                            {s.type.toUpperCase()}
+                          </div>
+                          <div class="s-venue">
+                            {s.venueUrl ? (
+                              <a
+                                href={s.venueUrl}
+                                target="_blank"
+                                rel="noopener"
+                              >
+                                {s.venue}
+                              </a>
+                            ) : (
+                              s.venue
+                            )}
+                            <span class="s-room">{s.room}</span>
+                          </div>
+                        </div>
+                        <div class="s-presenters">
+                          {(s.presenterIds ?? s.presenters).map((pid, i) => {
+                            const name = s.presenters[i] ?? pid;
+                            const id = (s.presenterIds ?? [])[i] ?? null;
+                            const isTarget =
+                              name === "Luigi Seminara" ||
+                              name === "Antonino Furnari";
+                            return (
+                              <span key={i}>
+                                {id ? (
+                                  <a
+                                    href={`/team/${id}`}
+                                    class={`presenter-link ${isTarget ? "underline" : ""}`}
+                                  >
+                                    {name}
+                                  </a>
+                                ) : (
+                                  <span
+                                    class={
+                                      isTarget ? "underline font-[900]" : ""
+                                    }
+                                  >
+                                    {name}
+                                  </span>
+                                )}
+                                {i < s.presenters.length - 1 ? (
+                                  <span class="sep">,&nbsp;</span>
+                                ) : null}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════
-         CARD 2: PAPERS & SCHEDULE
+         MOBILE CARDS (Only 1 item per card)
          ═══════════════════════════════════════════ -->
-    <div class="share-card" id="share-card-2">
+    <div class="mobile-only-cards">
+      {
+        /* Dynamic calculation of total items across loops to set proper 1 / total count */
+      }
+      {
+        (() => {
+          const mobileItems = [
+            ...talks.map((t) => ({ type: "talk", data: t })),
+            ...(extendedAbstracts.length > 0
+              ? [{ type: "abstract", data: extendedAbstracts }]
+              : []),
+            ...papers.map((p) => ({ type: "paper", data: p })),
+          ];
+          const totalMobileCount = mobileItems.length;
 
-      <!-- Corner decorations (inline SVG, no external refs) -->
-      <svg class="deco deco-tl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 60 Q 30 20 60 50 Q 80 70 110 40" stroke="#2a9d8f" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8"/>
-        <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6"/>
-        <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6"/>
-      </svg>
-      <svg class="deco deco-tr" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 40 Q 40 70 70 40 Q 90 20 115 55" stroke="#e86f38" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7"/>
-        <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6"/>
-      </svg>
-      <svg class="deco deco-bl" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 80 Q 40 50 70 80 Q 90 100 115 70" stroke="#7b5b9e" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"/>
-        <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5"/>
-      </svg>
-      <svg class="deco deco-br" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.3;">
-        <path d="M10 50 Q 40 80 70 50 Q 90 30 115 65" stroke="#f4a24c" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"/>
-        <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5"/>
-      </svg>
+          return mobileItems.map((item, idx) => (
+            <div class="share-card">
+              {/* Corner decorations */}
+              <svg
+                class="deco deco-tl"
+                viewBox="0 0 120 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style="opacity:0.3;"
+              >
+                <path
+                  d="M10 60 Q 30 20 60 50 Q 80 70 110 40"
+                  stroke="#2a9d8f"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <circle cx="20" cy="90" r="10" fill="#f4a24c" opacity="0.8" />
+                <circle cx="80" cy="100" r="6" fill="#e86f38" opacity="0.6" />
+                <circle cx="105" cy="80" r="4" fill="#7b5b9e" opacity="0.6" />
+              </svg>
+              <svg
+                class="deco deco-tr"
+                viewBox="0 0 120 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style="opacity:0.3;"
+              >
+                <path
+                  d="M10 40 Q 40 70 70 40 Q 90 20 115 55"
+                  stroke="#e86f38"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <circle cx="100" cy="95" r="10" fill="#2a9d8f" opacity="0.7" />
+                <circle cx="30" cy="100" r="6" fill="#7b5b9e" opacity="0.6" />
+              </svg>
+              <svg
+                class="deco deco-bl"
+                viewBox="0 0 120 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style="opacity:0.3;"
+              >
+                <path
+                  d="M10 80 Q 40 50 70 80 Q 90 100 115 70"
+                  stroke="#7b5b9e"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7" />
+                <circle cx="90" cy="20" r="5" fill="#e86f38" opacity="0.5" />
+              </svg>
+              <svg
+                class="deco deco-br"
+                viewBox="0 0 120 120"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style="opacity:0.3;"
+              >
+                <path
+                  d="M10 50 Q 40 80 70 50 Q 90 30 115 65"
+                  stroke="#f4a24c"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6" />
+                <circle cx="100" cy="25" r="5" fill="#7b5b9e" opacity="0.5" />
+              </svg>
 
-      <!-- ── HEADER ── -->
-      <div class="card-header">
-        <div class="card-title-block">
-          <div class="card-event-line" style="display: flex; align-items: center; gap: 0.5rem;">
-            {title}:
-            <span class="card-count" style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;">2/2</span>
-          </div>
-          <div class="card-subtitle-line">
-            {subtitle.split(' ').map((word, i) => (
-              <span class={`word word-${i}`}>{word} </span>
-            ))}
-          </div>
-        </div>
-        <!-- Co-AI + institution logos top-right -->
-        <div class="header-logos">
-          {unict_logo && <img src={unict_logo} alt="University of Catania" class="hdr-logo unict" />}
-          {iplab_logo && <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />}
-          <div class="logo-vsep"></div>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 1px;">
-            <div class="co-ai-logo" aria-label="Co-AI" style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;">
-              <span style="color:#1b285c">C</span>
-              <span style="color:#2a9d8f">o</span>
-              <span style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block">-</span>
-              <span style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block">A</span>
-              <span style="color:#f4a24c;margin-left:2px">I</span>
-            </div>
-            <a href="https://coai-iplab.github.io" target="_blank" rel="noopener" style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;">
-              coai-iplab.github.io
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── PAPERS & SCHEDULE ── -->
-      {papers.map(paper => {
-        const paperDates = [...new Set(paper.sessions.map(s => s.date))];
-        return (
-          <div class="schedule-card" style="margin-bottom: 0;">
-            <h2 class="schedule-title">{paper.title.toUpperCase()}</h2>
-            {(() => {
-              const matchingPub = allPublications.find(p => p.data.title.toLowerCase().trim() === paper.title.toLowerCase().trim());
-              if (!matchingPub) return null;
-              const authorsList = matchingPub.data.authors.split(/, | and /g).map(a => a.trim());
-              const projectLink = matchingPub.data.links?.find(l => l.label.toLowerCase() === 'project')?.url;
-              const isViterbi = paper.title.toLowerCase().includes("viterbiplannet");
-              return (
-                <div style="text-align: center; font-size: 0.7rem; font-weight: 800; color: #4b5563; margin-top: -0.6rem; margin-bottom: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;">
-                  <div>
-                    {authorsList.map((author, index) => {
-                      const isDavide = author.toLowerCase().includes("davide molt");
-                      const displayName = isDavide ? "Davide Moltisanti (University of Bath)" : author;
-                      return (
-                        <span>
-                          {isDavide ? (
-                            <a href="https://www.davidemoltisanti.com/research/" target="_blank" rel="noopener" style="color: inherit; text-decoration: none; font-weight: 800;">{displayName}</a>
-                          ) : isGroupMember(author) ? (
-                            <span class="underline decoration-gray-400 font-[900]">{author}</span>
-                          ) : (
-                            <span>{author}</span>
-                          )}
-                          {index < authorsList.length - 1 ? ', ' : ''}
-                        </span>
-                      );
-                    })}
+              <div class="card-header">
+                <div class="card-title-block">
+                  <div
+                    class="card-event-line"
+                    style="display: flex; align-items: center; gap: 0.5rem;"
+                  >
+                    {title}:
+                    <span
+                      class="card-count"
+                      style="font-size: 0.7rem; font-weight: 900; background: #e86f3815; color: #e86f38; border: 1px solid #e86f3830; padding: 1px 6px; border-radius: 999px; text-transform: none; letter-spacing: normal; display: inline-flex; align-items: center; line-height: 1;"
+                    >
+                      {idx + 1}/{totalMobileCount}
+                    </span>
                   </div>
-                  {isViterbi && (
-                    <div style="margin-top: 0.1rem; margin-bottom: 0.15rem;">
-                      <a href="https://github.com/Gigi-G/ViterbiPlanNet" target="_blank" rel="noopener noreferrer" style="color: #2a9d8f; text-decoration: underline; font-weight: 800; font-size: 0.65rem;">
-                        https://github.com/Gigi-G/ViterbiPlanNet
-                      </a>
-                    </div>
-                  )}
-                  {isViterbi && (
-                    <p class="viterbi-abstract" style="font-size: 0.65rem; text-align: justify; max-width: 38rem; line-height: 1.35; color: #4b5563; font-weight: 600; margin-top: 0.4rem; margin-bottom: 0.2rem; text-transform: none; letter-spacing: normal; word-spacing: normal;">
-                      In this paper we present ViterbiPlanNet to address the limitations of implicit learning in procedural planning by explicitly grounding knowledge in external structures. Rather than relying on massive models to blindly memorize task rules we introduce a differentiable layer that embeds a procedural knowledge graph directly into the end to end training process. This approach shifts the learning burden from brute force parameter scaling to structure aware optimization acting as an algorithmic guardrail. Ultimately we demonstrate that grounding neural networks in these external constraints drastically reduces computational costs improves sample efficiency and produces highly robust sequence predictions.
-                    </p>
-                  )}
-                  {projectLink && !isViterbi && (
-                    <a href={projectLink} target="_blank" rel="noopener" class="pill teal-pill" style="font-size: 0.55rem; padding: 2px 8px; border-radius: 999px; text-decoration: none; line-height: 1;">
-                      PROJECT PAGE
-                    </a>
-                  )}
+                  <div class="card-subtitle-line">
+                    {subtitle.split(" ").map((word, i) => (
+                      <span class={`word word-${i}`}>{word} </span>
+                    ))}
+                  </div>
                 </div>
-              );
-            })()}
+                <div class="header-logos">
+                  {unict_logo && (
+                    <img
+                      src={unict_logo}
+                      alt="University of Catania"
+                      class="hdr-logo unict"
+                    />
+                  )}
+                  {iplab_logo && (
+                    <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />
+                  )}
+                  <div class="logo-vsep" />
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 1px;">
+                    <div
+                      class="co-ai-logo"
+                      aria-label="Co-AI"
+                      style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;"
+                    >
+                      <span style="color:#1b285c">C</span>
+                      <span style="color:#2a9d8f">o</span>
+                      <span style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block">
+                        -
+                      </span>
+                      <span style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block">
+                        A
+                      </span>
+                      <span style="color:#f4a24c;margin-left:2px">I</span>
+                    </div>
+                    <a
+                      href="https://coai-iplab.github.io"
+                      target="_blank"
+                      rel="noopener"
+                      style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;"
+                    >
+                      coai-iplab.github.io
+                    </a>
+                  </div>
+                </div>
+              </div>
 
-            <!-- Timeline -->
-            <div class="timeline">
-              {paperDates.map((d, i) => {
-                const { month, day } = fmtDate(d);
-                const color = dateColorMap[d];
-                return (
-                  <div class="tl-item">
-                    {i > 0 && <div class="tl-line" style={`background: linear-gradient(to right, ${dateColorMap[paperDates[i-1]]}, ${color})`}></div>}
-                    <div class="tl-dot" style={`background: ${color}`}>
-                      <span class="tl-month">{month}</span>
-                      <span class="tl-day">{day}</span>
+              {idx === 0 && (
+                <div
+                  class="attendance-box"
+                  style="background: #eef2f6; border-radius: 20px; padding: 0.8rem 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin-bottom: 1rem; position: relative; z-index: 1;"
+                >
+                  <span style="font-size: 0.85rem; font-weight: 900; color: #1b285c; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 100%;">
+                    FIND US AT CVPR!
+                  </span>
+                  <div style="display: flex; gap: 1.5rem; align-items: center; justify-content: center; width: 100%;">
+                    <a
+                      href="http://antoninofurnari.github.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit;"
+                    >
+                      {furnari_photo ? (
+                        <img
+                          src={furnari_photo}
+                          alt="Antonino Furnari"
+                          style="width: 4.8rem; height: 4.8rem; border-radius: 50%; object-fit: cover; border: 2.2px solid #2a9d8f; transition: transform 0.2s;"
+                          class="hover:scale-105"
+                        />
+                      ) : (
+                        <div style="width: 4.8rem; height: 4.8rem; border-radius: 50%; background: #2a9d8f; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem;">
+                          AF
+                        </div>
+                      )}
+                      <span style="font-size: 0.95rem; font-weight: 800; color: #374151; text-decoration: underline; text-underline-offset: 2px;">
+                        Antonino Furnari
+                      </span>
+                    </a>
+                    <a
+                      href="https://seminaraluigi.altervista.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit;"
+                    >
+                      {seminara_photo ? (
+                        <img
+                          src={seminara_photo}
+                          alt="Luigi Seminara"
+                          style="width: 4.8rem; height: 4.8rem; border-radius: 50%; object-fit: cover; border: 2px solid #7b5b9e; transition: transform 0.2s;"
+                          class="hover:scale-105"
+                        />
+                      ) : (
+                        <div style="width: 4.8rem; height: 4.8rem; border-radius: 50%; background: #7b5b9e; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem;">
+                          LS
+                        </div>
+                      )}
+                      <span style="font-size: 0.95rem; font-weight: 800; color: #374151; text-decoration: underline; text-underline-offset: 2px;">
+                        Luigi Seminara
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Talk Card Item */}
+              {item.type === "talk" &&
+                (item.data.type === "Workshop Co-organization" ? (
+                  <div
+                    class="talk-card"
+                    style="margin-bottom: 0; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch;"
+                  >
+                    {/* Row 1: Date and Badges */}
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                      <div class="cal-icon" aria-hidden="true">
+                        <div class="cal-rings">
+                          <span />
+                          <span />
+                        </div>
+                        <div class="cal-body">
+                          <span class="cal-month">
+                            {fmtDate(item.data.date).month}
+                          </span>
+                          <span class="cal-day">
+                            {fmtDate(item.data.date).day}
+                          </span>
+                        </div>
+                      </div>
+                      <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; flex: 1; min-width: 0;">
+                        <span
+                          class="type-pill orange-bg"
+                          style="margin-bottom: 0;"
+                        >
+                          {item.data.type.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Row 2: Details */}
+                    <div style="padding: 0 0.25rem;">
+                      <h2 class="talk-title">
+                        {item.data.title.toUpperCase()}
+                      </h2>
+                      <p class="talk-presenter">
+                        {(item.data.presenterIds ?? []).map((pid, i) => {
+                          const name =
+                            (item.data.presenterIds ?? []).map(
+                              (p) => item.data.presenter,
+                            )[i] ?? item.data.presenter;
+                          const isTarget =
+                            name === "Luigi Seminara" ||
+                            name === "Antonino Furnari";
+                          return (
+                            <span key={pid}>
+                              <a
+                                href={`/team/${pid}`}
+                                class={`presenter-link ${isTarget ? "underline" : ""}`}
+                              >
+                                {name}
+                              </a>
+                              {i < (item.data.presenterIds ?? []).length - 1 ? (
+                                <span>,&nbsp;</span>
+                              ) : null}
+                            </span>
+                          );
+                        })}
+                        {(!item.data.presenterIds ||
+                          item.data.presenterIds.length === 0) && (
+                          <span
+                            class={
+                              item.data.presenter === "Luigi Seminara" ||
+                              item.data.presenter === "Antonino Furnari"
+                                ? "underline font-[900]"
+                                : ""
+                            }
+                          >
+                            {item.data.presenter}
+                          </span>
+                        )}
+                      </p>
+                      <div class="talk-pills" style="margin-bottom: 0;">
+                        {item.data.type !== "Workshop Co-organization" &&
+                          (item.data.workshopUrl ? (
+                            <a
+                              href={item.data.workshopUrl}
+                              target="_blank"
+                              rel="noopener"
+                              class="pill teal-pill"
+                            >
+                              WORKSHOP&nbsp;|&nbsp;
+                              {item.data.workshop
+                                .replace(" Workshop", "")
+                                .toUpperCase()}
+                            </a>
+                          ) : (
+                            <span class="pill teal-pill">
+                              WORKSHOP&nbsp;|&nbsp;
+                              {item.data.workshop
+                                .replace(" Workshop", "")
+                                .toUpperCase()}
+                            </span>
+                          ))}
+                        <span class="pill purple-pill">
+                          TIME:&nbsp;{item.data.time}
+                        </span>
+                        <span class="pill orange-pill">
+                          LOCATION:&nbsp;{item.data.room.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Row 3: Challenges */}
+                    {item.data.challenges &&
+                      item.data.challenges.length > 0 && (
+                        <div
+                          class="talk-challenges"
+                          style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px dashed #e5e7eb;"
+                        >
+                          <span class="challenges-title">
+                            CHALLENGES CO-ORGANIZED AT THE WORKSHOP:
+                          </span>
+                          <ul class="challenges-list">
+                            {item.data.challenges.map((ch) => (
+                              <li>
+                                <span class="challenge-name">{ch.name}</span>
+                                <span class="challenge-sep"> - </span>
+                                {ch.organizerId ? (
+                                  <a
+                                    href={`/team/${ch.organizerId}`}
+                                    class="challenge-organizer"
+                                  >
+                                    {ch.organizer}
+                                  </a>
+                                ) : (
+                                  <span class="challenge-organizer">
+                                    {ch.organizer}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                  </div>
+                ) : (
+                  <div class="talk-card" style="margin-bottom: 0;">
+                    <div class="cal-icon" aria-hidden="true">
+                      <div class="cal-rings">
+                        <span />
+                        <span />
+                      </div>
+                      <div class="cal-body">
+                        <span class="cal-month">
+                          {fmtDate(item.data.date).month}
+                        </span>
+                        <span class="cal-day">
+                          {fmtDate(item.data.date).day}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="talk-content">
+                      <span class="type-pill orange-bg">
+                        {item.data.type.toUpperCase()}
+                      </span>
+                      <h2 class="talk-title">
+                        {item.data.title.toUpperCase()}
+                      </h2>
+                      <p class="talk-presenter">
+                        {item.data.type !== "Workshop Co-organization" && (
+                          <span>SPEAKER:&nbsp;</span>
+                        )}
+                        {(item.data.presenterIds ?? []).map((pid, i) => {
+                          const name = (item.data.presenterIds ?? [])[i]
+                            ? (item.data.presenter.split(/\s*[,&]\s*/)[i] ??
+                              item.data.presenter)
+                            : item.data.presenter;
+                          const isTarget =
+                            name === "Luigi Seminara" ||
+                            name === "Antonino Furnari";
+                          return (
+                            <span key={pid}>
+                              <a
+                                href={`/team/${pid}`}
+                                class={`presenter-link ${isTarget ? "underline" : ""}`}
+                              >
+                                {name}
+                              </a>
+                              {i < (item.data.presenterIds ?? []).length - 1 ? (
+                                <span>,&nbsp;</span>
+                              ) : null}
+                            </span>
+                          );
+                        })}
+                        {(!item.data.presenterIds ||
+                          item.data.presenterIds.length === 0) && (
+                          <span
+                            class={
+                              item.data.presenter === "Luigi Seminara" ||
+                              item.data.presenter === "Antonino Furnari"
+                                ? "underline font-[900]"
+                                : ""
+                            }
+                          >
+                            {item.data.presenter}
+                          </span>
+                        )}
+                      </p>
+                      <div class="talk-pills">
+                        {item.data.type !== "Workshop Co-organization" &&
+                          (item.data.workshopUrl ? (
+                            <a
+                              href={item.data.workshopUrl}
+                              target="_blank"
+                              rel="noopener"
+                              class="pill teal-pill"
+                            >
+                              WORKSHOP&nbsp;|&nbsp;
+                              {item.data.workshop
+                                .replace(" Workshop", "")
+                                .toUpperCase()}
+                            </a>
+                          ) : (
+                            <span class="pill teal-pill">
+                              WORKSHOP&nbsp;|&nbsp;
+                              {item.data.workshop
+                                .replace(" Workshop", "")
+                                .toUpperCase()}
+                            </span>
+                          ))}
+                        <span class="pill purple-pill">
+                          TIME:&nbsp;{item.data.time}
+                        </span>
+                        <span class="pill orange-pill">
+                          LOCATION:&nbsp;{item.data.room.toUpperCase()}
+                        </span>
+                      </div>
+                      {item.data.challenges &&
+                        item.data.challenges.length > 0 && (
+                          <div class="talk-challenges">
+                            <span class="challenges-title">
+                              CHALLENGES CO-ORGANIZED AT THE WORKSHOP:
+                            </span>
+                            <ul class="challenges-list">
+                              {item.data.challenges.map((ch) => (
+                                <li>
+                                  <span class="challenge-name">{ch.name}</span>
+                                  <span class="challenge-sep"> - </span>
+                                  {ch.organizerId ? (
+                                    <a
+                                      href={`/team/${ch.organizerId}`}
+                                      class="challenge-organizer"
+                                    >
+                                      {ch.organizer}
+                                    </a>
+                                  ) : (
+                                    <span class="challenge-organizer">
+                                      {ch.organizer}
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
 
-            <!-- Session rows -->
-            <div class="sessions">
-              {paper.sessions.map((s, si) => {
-                const { month, day } = fmtDate(s.date);
-                const color = dateColorMap[s.date];
-                const isOral = s.type === 'Oral';
-                return (
-                  <div class={`session-row ${si % 2 === 0 ? 'row-even' : 'row-odd'}`}>
-                    <div class="session-meta-row">
-                      <div class="s-date" style={`background: ${color}`}>
-                        <span class="s-month">{month}</span>
-                        <span class="s-day">{day}</span>
+              {/* Extended Abstracts Card Item */}
+              {item.type === "abstract" && (
+                <div
+                  class="talk-card"
+                  style="margin-bottom: 0; display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch;"
+                >
+                  {/* Row 1: Date and Badges */}
+                  <div style="display: flex; align-items: center; gap: 0.85rem;">
+                    <div class="cal-icon" aria-hidden="true">
+                      <div class="cal-rings">
+                        <span />
+                        <span />
                       </div>
-                      <div class="s-time">
-                        {s.time.split(/\s*-\s*/).map((t, ti) => (
-                          <span class={`time-part time-part-${ti}`}>{t}</span>
-                        ))}
-                      </div>
-                      <div class={`s-type ${isOral ? 'oral' : 'poster'}`}>{s.type.toUpperCase()}</div>
-                      <div class="s-venue">
-                        {s.venueUrl
-                          ? <a href={s.venueUrl} target="_blank" rel="noopener">{s.venue}</a>
-                          : s.venue
-                        }
-                        <span class="s-room">{s.room}</span>
+                      <div class="cal-body">
+                        <span class="cal-month">JUN</span>
+                        <span class="cal-day">3</span>
                       </div>
                     </div>
-                    <div class="s-presenters">
-                      {(s.presenterIds ?? s.presenters).map((pid, i) => {
-                        const name = s.presenters[i] ?? pid;
-                        const id = (s.presenterIds ?? [])[i] ?? null;
-                        const isTarget = name === 'Luigi Seminara' || name === 'Antonino Furnari';
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; flex: 1; min-width: 0;">
+                      <span
+                        class="type-pill orange-bg"
+                        style="margin-bottom: 0;"
+                      >
+                        EXTENDED ABSTRACTS
+                      </span>
+                      <span
+                        class="type-pill teal-pill"
+                        style="margin-bottom: 0;"
+                      >
+                        COLLABORATIONS WITH OTHER GROUPS
+                      </span>
+                    </div>
+                  </div>
+                  {/* Row 2: Bullet List */}
+                  <div
+                    class="abstracts-list-container"
+                    style="padding: 0 0.25rem;"
+                  >
+                    <ul style="list-style-type: disc; padding-left: 1.1rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                      {item.data.map((ea) => {
+                        const authorsList = ea.authors
+                          .split(/, | and /g)
+                          .map((a) => a.trim());
                         return (
-                          <span key={i}>
-                            {id ? (
-                              <a href={`/team/${id}`} class={`presenter-link ${isTarget ? 'underline' : ''}`}>{name}</a>
+                          <li style="font-size: 0.65rem; font-weight: 700; color: #374151; line-height: 1.4;">
+                            {authorsList.map((author, index) => (
+                              <span>
+                                {isGroupMember(author) ? (
+                                  <span class="underline decoration-gray-400 font-[900]">
+                                    {author}
+                                  </span>
+                                ) : (
+                                  <span>{author}</span>
+                                )}
+                                {index < authorsList.length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                            ,{" "}
+                            {ea.projectUrl ? (
+                              <a
+                                href={ea.projectUrl}
+                                target="_blank"
+                                rel="noopener"
+                                style="color: #1b285c; font-weight: 900; text-decoration: underline; text-underline-offset: 1px;"
+                              >
+                                {ea.title}
+                              </a>
                             ) : (
-                              <span class={isTarget ? 'underline font-[900]' : ''}>{name}</span>
-                            )}{i < s.presenters.length - 1 ? <span class="sep">,&nbsp;</span> : null}
-                          </span>
+                              <span style="color: #1b285c; font-weight: 900;">
+                                {ea.title}
+                              </span>
+                            )}
+                            ,{" "}
+                            {ea.workshopUrl ? (
+                              <a
+                                href={ea.workshopUrl}
+                                target="_blank"
+                                rel="noopener"
+                                style="color: #2a9d8f; text-decoration: underline; font-weight: 800;"
+                              >
+                                {ea.workshop}
+                              </a>
+                            ) : (
+                              <span style="color: #2a9d8f; font-weight: 800;">
+                                {ea.workshop}
+                              </span>
+                            )}
+                            , {ea.time} & {ea.room}
+                          </li>
                         );
                       })}
-                    </div>
+                    </ul>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+                </div>
+              )}
 
+              {/* Paper Card Item */}
+              {item.type === "paper" &&
+                (() => {
+                  return (
+                    <div
+                      class="schedule-card"
+                      style="margin-bottom: 0; width: 100%; box-sizing: border-box; background: #fff4ec; padding: 1rem; border-radius: 20px;"
+                    >
+                      {(() => {
+                        const matchingPub = allPublications.find(
+                          (p) =>
+                            p.data.title.toLowerCase().trim() ===
+                            item.data.title.toLowerCase().trim(),
+                        );
+                        if (!matchingPub) return null;
+                        const authorsList = matchingPub.data.authors
+                          .split(/, | and /g)
+                          .map((a) => a.trim());
+                        const projectLink = matchingPub.data.links?.find(
+                          (l) => l.label.toLowerCase() === "project",
+                        )?.url;
+                        const isViterbi = item.data.title
+                          .toLowerCase()
+                          .includes("viterbiplannet");
+                        return (
+                          <div style="margin-bottom: 0.4rem;">
+                            <p style="text-align: left; font-size: 0.72rem; font-weight: 700; color: #374151; margin-bottom: 0.15rem; line-height: 1.45;">
+                              {authorsList.map((author, index) => (
+                                <span>
+                                  {author
+                                    .toLowerCase()
+                                    .includes("davide molt") ? (
+                                    <a
+                                      href="https://www.davidemoltisanti.com/research/"
+                                      target="_blank"
+                                      rel="noopener"
+                                      style="color: inherit; text-decoration: none; font-weight: 800;"
+                                    >
+                                      Davide Moltisanti (University of Bath)
+                                    </a>
+                                  ) : isGroupMember(author) ? (
+                                    <span class="underline decoration-gray-400 font-[900]">
+                                      {author}
+                                    </span>
+                                  ) : (
+                                    <span>{author}</span>
+                                  )}
+                                  {index < authorsList.length - 1 ? ", " : ""}
+                                </span>
+                              ))}
+                              ,{" "}
+                              <strong style="color: #1b285c;">
+                                "{item.data.title}"
+                              </strong>
+                            </p>
+                            {isViterbi && (
+                              <div style="margin: 0; text-align: center; width: 100%;">
+                                <a
+                                  href="https://github.com/Gigi-G/ViterbiPlanNet"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style="color: #2a9d8f; text-decoration: underline; font-weight: 800; font-size: 0.65rem; word-break: break-all;"
+                                >
+                                  https://github.com/Gigi-G/ViterbiPlanNet
+                                </a>
+                              </div>
+                            )}
+                            {projectLink && !isViterbi && (
+                              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <a
+                                  href={projectLink}
+                                  target="_blank"
+                                  rel="noopener"
+                                  class="pill teal-pill"
+                                  style="font-size: 0.55rem; padding: 2px 8px; text-decoration: none; line-height: 1;"
+                                >
+                                  PROJECT PAGE
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
+                      {/* Bullet list of presentations */}
+                      <div
+                        class="abstracts-list-container"
+                        style="padding: 0 0.25rem;"
+                      >
+                        <ul style="list-style-type: disc; padding-left: 1.1rem; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.65rem; font-weight: 700; color: #374151; line-height: 1.4;">
+                          {item.data.sessions.map((s) => {
+                            const isOral = s.type === "Oral";
+                            return (
+                              <li>
+                                <strong
+                                  style={`color: ${dateColorMap[s.date]};`}
+                                >
+                                  {s.date}
+                                </strong>{" "}
+                                at <strong>{s.time}</strong> -{" "}
+                                <span
+                                  class={`pill ${isOral ? "teal-pill" : "orange-pill"}`}
+                                  style="font-size: 0.5rem; padding: 1px 6px; display: inline-block; vertical-align: middle; margin-right: 0.25rem; line-height: 1.1;"
+                                >
+                                  {s.type.toUpperCase()}
+                                </span>{" "}
+                                at{" "}
+                                {s.venueUrl ? (
+                                  <a
+                                    href={s.venueUrl}
+                                    target="_blank"
+                                    rel="noopener"
+                                    style="color: #1b285c; font-weight: 800; text-decoration: underline;"
+                                  >
+                                    {s.venue}
+                                  </a>
+                                ) : (
+                                  <span>{s.venue}</span>
+                                )}{" "}
+                                ({s.room}). Presenter:{" "}
+                                {(s.presenterIds ?? s.presenters).map(
+                                  (pid, i) => {
+                                    const name = s.presenters[i] ?? pid;
+                                    const id =
+                                      (s.presenterIds ?? [])[i] ?? null;
+                                    const isTarget =
+                                      name === "Luigi Seminara" ||
+                                      name === "Antonino Furnari";
+                                    return (
+                                      <span>
+                                        {id ? (
+                                          <a
+                                            href={`/team/${id}`}
+                                            style="color: inherit; text-decoration: underline;"
+                                            class={
+                                              isTarget
+                                                ? "underline font-[900]"
+                                                : ""
+                                            }
+                                          >
+                                            {name}
+                                          </a>
+                                        ) : (
+                                          <span
+                                            class={
+                                              isTarget
+                                                ? "underline font-[900]"
+                                                : ""
+                                            }
+                                          >
+                                            {name}
+                                          </span>
+                                        )}
+                                        {i < s.presenters.length - 1 ? (
+                                          <span>,&nbsp;</span>
+                                        ) : null}
+                                      </span>
+                                    );
+                                  },
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    </div>
+                  );
+                })()}
+            </div>
+          ));
+        })()
+      }
+    </div>
   </div>
 </Layout>
-
-
-</style>
 
 <style>
   /* ── Page wrapper ── */
@@ -459,6 +1701,16 @@ const isGroupMember = (author: string) => {
     max-width: 700px;
     margin: 0 auto;
     padding-bottom: 3rem;
+  }
+
+  .desktop-only-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .mobile-only-cards {
+    display: none;
   }
 
   /* ── Action bar ── */
@@ -480,7 +1732,9 @@ const isGroupMember = (author: string) => {
     text-decoration: none;
     transition: color 0.2s;
   }
-  .back-link:hover { color: #1b285c; }
+  .back-link:hover {
+    color: #1b285c;
+  }
 
   .download-btn {
     display: inline-flex;
@@ -488,29 +1742,38 @@ const isGroupMember = (author: string) => {
     gap: 0.4rem;
     font-size: 0.8rem;
     font-weight: 900;
-    font-family: 'Nunito', sans-serif;
+    font-family: "Nunito", sans-serif;
     color: #fff;
     background: #1b285c;
     border: none;
     border-radius: 12px;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
+    transition:
+      background 0.2s,
+      transform 0.15s;
   }
-  .download-btn:hover { background: #2a9d8f; transform: translateY(-1px); }
-  .download-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .download-btn:hover {
+    background: #2a9d8f;
+    transform: translateY(-1px);
+  }
+  .download-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 
   /* ── Card shell ── */
   .share-card {
     position: relative;
     background: #fff;
     border-radius: 28px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
     width: 650px;
-    aspect-ratio: 4 / 5;
+    height: auto;
     padding: 2rem 2.2rem 1.5rem;
     overflow: hidden;
-    font-family: 'Nunito', sans-serif;
+    font-family: "Nunito", sans-serif;
   }
 
   /* ── Corner decorations ── */
@@ -519,10 +1782,25 @@ const isGroupMember = (author: string) => {
     width: 130px;
     pointer-events: none;
   }
-  .deco-tl { top: -10px; left: -10px; }
-  .deco-tr { top: -10px; right: -10px; transform: scaleX(-1); }
-  .deco-bl { bottom: -10px; left: -10px; transform: scaleY(-1); }
-  .deco-br { bottom: -10px; right: -10px; transform: scale(-1); }
+  .deco-tl {
+    top: -10px;
+    left: -10px;
+  }
+  .deco-tr {
+    top: -10px;
+    right: -10px;
+    transform: scaleX(-1);
+  }
+  .deco-bl {
+    bottom: -10px;
+    left: -10px;
+    transform: scaleY(-1);
+  }
+  .deco-br {
+    bottom: -10px;
+    right: -10px;
+    transform: scale(-1);
+  }
 
   /* ── Header ── */
   .card-header {
@@ -549,7 +1827,9 @@ const isGroupMember = (author: string) => {
     letter-spacing: -0.02em;
     text-transform: uppercase;
   }
-  .word-0 { color: #1b285c; }
+  .word-0 {
+    color: #1b285c;
+  }
   .word-1 {
     background: linear-gradient(90deg, #2a9d8f, #7b5b9e, #e86f38);
     -webkit-background-clip: text;
@@ -579,30 +1859,40 @@ const isGroupMember = (author: string) => {
     margin-top: 0.15rem;
   }
   .hdr-logo {
-    height: 2rem;       /* unified height for all logos */
+    height: 2rem; /* unified height for all logos */
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
     display: inline-block;
     vertical-align: middle;
   }
-  .hdr-logo.unict { height: 2rem; }
-  .hdr-logo.iplab { height: 2rem; }
+  .hdr-logo.unict {
+    height: 2rem;
+  }
+  .hdr-logo.iplab {
+    height: 2rem;
+  }
   .logo-vsep {
     width: 1px;
     height: 1.8rem;
     background: #e5e7eb;
     flex-shrink: 0;
   }
-  .logo-co { color: #1b285c; }
-  .logo-dash { color: #8ab07d; }
+  .logo-co {
+    color: #1b285c;
+  }
+  .logo-dash {
+    color: #8ab07d;
+  }
   .logo-a {
     background: linear-gradient(to bottom, #7b5b9e 55%, #e86f38 45%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  .logo-i { color: #f4a24c; }
+  .logo-i {
+    color: #f4a24c;
+  }
 
   /* ── Invited talk card ── */
   .talk-card {
@@ -624,7 +1914,7 @@ const isGroupMember = (author: string) => {
     flex-direction: column;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   }
   .cal-rings {
     background: #e86f38;
@@ -634,8 +1924,10 @@ const isGroupMember = (author: string) => {
     padding: 3px 0 2px;
   }
   .cal-rings span {
-    width: 6px; height: 6px;
-    border-radius: 50%; background: #fff;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
   }
   .cal-body {
     background: #fff;
@@ -647,29 +1939,57 @@ const isGroupMember = (author: string) => {
     display: flex;
     flex-direction: column;
   }
-  .cal-month { font-size: 0.55rem; font-weight: 900; color: #e86f38; text-transform: uppercase; letter-spacing: 0.05em; }
-  .cal-day   { font-size: 1.1rem; font-weight: 900; color: #1b285c; line-height: 1.1; }
+  .cal-month {
+    font-size: 0.55rem;
+    font-weight: 900;
+    color: #e86f38;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .cal-day {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #1b285c;
+    line-height: 1.1;
+  }
 
-  .talk-content { flex: 1; min-width: 0; }
+  .talk-content {
+    flex: 1;
+    min-width: 0;
+  }
 
   .type-pill {
     display: inline-block;
-    font-size: 0.6rem; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    padding: 2px 8px; border-radius: 999px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 999px;
     margin-bottom: 0.35rem;
   }
-  .orange-bg { background: #e86f38; color: #fff; }
+  .orange-bg {
+    background: #e86f38;
+    color: #fff;
+  }
 
   .talk-title {
-    font-size: 0.8rem; font-weight: 900; color: #1b285c;
-    line-height: 1.3; margin: 0 0 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #1b285c;
+    line-height: 1.3;
+    margin: 0 0 0.3rem;
     letter-spacing: -0.01em;
   }
   .talk-presenter {
-    font-size: 0.65rem; font-weight: 900; color: #374151;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #374151;
     margin: 0 0 0.45rem;
-    display: flex; align-items: center; flex-wrap: wrap; gap: 0.1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.1rem;
   }
 
   /* Clickable presenter name */
@@ -680,24 +2000,47 @@ const isGroupMember = (author: string) => {
     font-weight: 900;
     transition: color 0.2s;
   }
-  .presenter-link:hover { color: #2a9d8f; }
+  .presenter-link:hover {
+    color: #2a9d8f;
+  }
 
   .talk-pills {
-    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
   .pill {
     display: inline-block;
-    font-size: 0.6rem; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 0.04em;
-    padding: 3px 10px; border-radius: 999px;
-    text-decoration: none; white-space: nowrap;
+    font-size: 0.6rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .pill:is(a):hover { opacity: 0.85; }
-  .teal-pill   { background: #2a9d8f; color: #fff; }
-  .purple-pill { background: #7b5b9e; color: #fff; }
-  .orange-pill { background: #e86f38; color: #fff; }
+  .pill:is(a):hover {
+    opacity: 0.85;
+  }
+  .teal-pill {
+    background: #2a9d8f;
+    color: #fff;
+  }
+  .purple-pill {
+    background: #7b5b9e;
+    color: #fff;
+  }
+  .orange-pill {
+    background: #e86f38;
+    color: #fff;
+  }
 
-  .ar-person { width: 72px; flex-shrink: 0; align-self: center; }
+  .ar-person {
+    width: 72px;
+    flex-shrink: 0;
+    align-self: center;
+  }
 
   /* ── Schedule card ── */
   .schedule-card {
@@ -709,53 +2052,103 @@ const isGroupMember = (author: string) => {
     margin-bottom: 1rem;
   }
   .schedule-title {
-    font-size: 0.9rem; font-weight: 900; color: #1b285c;
-    letter-spacing: -0.01em; line-height: 1.3;
-    margin: 0 0 0.9rem; text-align: center;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: #1b285c;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: 0 0 0.9rem;
+    text-align: center;
   }
 
   /* Timeline */
   .timeline {
-    display: flex; align-items: center;
-    justify-content: center; gap: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
     margin-bottom: 0.9rem;
   }
-  .tl-item { display: flex; align-items: center; }
-  .tl-line { width: 50px; height: 4px; border-radius: 2px; }
-  .tl-dot {
-    width: 44px; height: 44px; border-radius: 50%;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #fff; font-weight: 900;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15); flex-shrink: 0;
+  .tl-item {
+    display: flex;
+    align-items: center;
   }
-  .tl-month { font-size: 0.45rem; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
-  .tl-day   { font-size: 1rem; line-height: 1.1; }
+  .tl-line {
+    width: 50px;
+    height: 4px;
+    border-radius: 2px;
+  }
+  .tl-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+  }
+  .tl-month {
+    font-size: 0.45rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .tl-day {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
 
   /* Session rows — grid: date | time | type | venue+room | presenters */
-  .sessions { border-radius: 12px; overflow: hidden; }
+  .sessions {
+    border-radius: 12px;
+    overflow: hidden;
+  }
   .session-row {
     display: grid;
     grid-template-columns: 40px 82px 56px 1fr 1fr;
     align-items: center;
     gap: 0.45rem;
     padding: 0.45rem 0.5rem;
-    font-size: 0.68rem; font-weight: 700; color: #374151;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #374151;
   }
   .session-meta-row {
     display: contents;
   }
-  .row-even { background: rgba(255,255,255,0.75); }
-  .row-odd  { background: rgba(255,255,255,0.3); }
+  .row-even {
+    background: rgba(255, 255, 255, 0.75);
+  }
+  .row-odd {
+    background: rgba(255, 255, 255, 0.3);
+  }
 
   .s-date {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #fff; font-weight: 900; flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    flex-shrink: 0;
   }
-  .s-month { font-size: 0.38rem; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
-  .s-day   { font-size: 0.85rem; line-height: 1.1; }
+  .s-month {
+    font-size: 0.38rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .s-day {
+    font-size: 0.85rem;
+    line-height: 1.1;
+  }
 
   .s-time {
     font-size: 0.62rem;
@@ -772,27 +2165,58 @@ const isGroupMember = (author: string) => {
   }
 
   .s-type {
-    font-size: 0.52rem; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    padding: 3px 7px; border-radius: 999px;
-    text-align: center; white-space: nowrap;
+    font-size: 0.52rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 7px;
+    border-radius: 999px;
+    text-align: center;
+    white-space: nowrap;
   }
-  .oral   { background: #2a9d8f; color: #fff; }
-  .poster { background: #e86f38; color: #fff; }
+  .oral {
+    background: #2a9d8f;
+    color: #fff;
+  }
+  .poster {
+    background: #e86f38;
+    color: #fff;
+  }
 
   .s-venue {
-    font-size: 0.62rem; font-weight: 800; color: #374151;
-    display: flex; flex-direction: column; gap: 1px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
   }
-  .s-venue a { color: #1b285c; text-decoration: underline; text-underline-offset: 2px; }
-  .s-venue a:hover { color: #2a9d8f; }
-  .s-room { font-size: 0.55rem; font-weight: 700; color: #6b7280; }
+  .s-venue a {
+    color: #1b285c;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .s-venue a:hover {
+    color: #2a9d8f;
+  }
+  .s-room {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #6b7280;
+  }
 
   .s-presenters {
-    font-size: 0.62rem; font-weight: 800; color: #374151;
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #374151;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
   }
-  .s-presenters .sep { color: #9ca3af; }
+  .s-presenters .sep {
+    color: #9ca3af;
+  }
 
   /* ── Card footer with logos ── */
   .card-footer {
@@ -807,7 +2231,8 @@ const isGroupMember = (author: string) => {
     z-index: 1;
   }
   .footer-sep {
-    width: 1px; height: 32px;
+    width: 1px;
+    height: 32px;
     background: #e5e7eb;
   }
   .footer-logo {
@@ -815,8 +2240,14 @@ const isGroupMember = (author: string) => {
     max-height: 36px;
     max-width: 120px;
   }
-  .footer-logo.unict { max-height: 40px; max-width: 130px; }
-  .footer-logo.iplab { max-height: 32px; max-width: 90px; }
+  .footer-logo.unict {
+    max-height: 40px;
+    max-width: 130px;
+  }
+  .footer-logo.iplab {
+    max-height: 32px;
+    max-width: 90px;
+  }
   /* Challenges organization */
   .talk-challenges {
     margin-top: 0.75rem;
@@ -859,14 +2290,16 @@ const isGroupMember = (author: string) => {
 
   /* PRINT: Only show the card, hide sidebar and non-card elements */
   @media print {
-    body, html {
+    body,
+    html {
       background: #fff !important;
     }
     .media-page > .action-bar,
     .media-page > :not(.share-card) {
       display: none !important;
     }
-    .media-page, .share-card {
+    .media-page,
+    .share-card {
       box-shadow: none !important;
       background: #fff !important;
       margin: 0 !important;
@@ -887,9 +2320,19 @@ const isGroupMember = (author: string) => {
       break-after: page;
     }
     /* Remove any print-unfriendly backgrounds or decorations if needed */
-    .deco { display: none !important; }
+    .deco {
+      display: none !important;
+    }
   }
-  @media (max-width: 680px) {
+  @media (max-width: 768px) {
+    .desktop-only-cards {
+      display: none !important;
+    }
+    .mobile-only-cards {
+      display: flex !important;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
     .media-page {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
@@ -899,13 +2342,15 @@ const isGroupMember = (author: string) => {
       box-sizing: border-box;
     }
     .share-card {
-      width: 100%;
+      width: 400px;
       max-width: 100%;
-      aspect-ratio: auto;
+      aspect-ratio: 4 / 5;
       height: auto;
       border-radius: 16px;
       padding: 1.5rem 1.2rem;
       box-sizing: border-box;
+      overflow: hidden;
+      margin: 0 auto;
     }
     .action-bar {
       width: 100%;
@@ -967,7 +2412,9 @@ const isGroupMember = (author: string) => {
       align-self: auto;
       flex-shrink: 0;
     }
-    .s-time, .s-type, .s-venue {
+    .s-time,
+    .s-type,
+    .s-venue {
       width: auto;
       flex-shrink: 0;
     }
@@ -991,8 +2438,8 @@ const isGroupMember = (author: string) => {
     }
     .s-presenters {
       width: 100%;
-      justify-content: center;
-      text-align: center;
+      justify-content: flex-start;
+      text-align: left;
     }
     .tl-line {
       width: 20px;
@@ -1002,6 +2449,14 @@ const isGroupMember = (author: string) => {
     }
     .ar-person {
       display: none !important;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .share-card {
+      width: 100% !important;
+      aspect-ratio: auto !important;
+      height: auto !important;
     }
   }
 </style>
