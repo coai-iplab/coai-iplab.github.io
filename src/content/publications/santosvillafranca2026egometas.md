@@ -1,7 +1,7 @@
 ---
 title: "Ego-METAS: an Egocentric online Multimodal Energy-efficient Temporal Action Segmentation benchmark"
 authors: "Maria Santos-Villafranca, Jesus Bermudez-Cameo, Alejandro Perez-Yus, Giovanni Maria Farinella, Antonino Furnari"
-venue: "arXiv preprint (Coming Soon)"
+venue: "arXiv preprint arXiv:2606.02246"
 year: "2026"
 pub_type: "preprint"
 research_line: ["datasets", "memory"]
@@ -9,8 +9,8 @@ teaser: "/images/teasers/santosvillafranca2026egometas.png"
 links:
   - label: "Website"
     url: "https://maria-sanvil.github.io/Ego-METAS-website/"
-  - label: "PDF"
-    url: "/publications/EgoMETAS_arXiv.pdf"
+  - label: "arXiv"
+    url: "https://arxiv.org/abs/2606.02246"
   - label: "Data"
     url: "https://huggingface.co/datasets/Ego-METAS/Ego-METAS"
 bibtex: |
@@ -19,7 +19,7 @@ bibtex: |
     author={Santos-Villafranca, Maria and Bermudez-Cameo, Jesus and Perez-Yus, Alejandro and Farinella, Giovanni Maria and Furnari, Antonino},
     journal={arXiv preprint},
     year={2026},
-    pdf={/EgoMETAS_arXiv.pdf}
+    arxiv={2606.02246}
   }
 active: true
 ---

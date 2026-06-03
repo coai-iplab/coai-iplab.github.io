@@ -20,7 +20,7 @@ const order2026 = [
   "proskill",
   "ego-extra",
   "online episodic memory visual query localization",
-  "exploring multimodal"
+  "exploring multimodal",
 ];
 
 const publications = (await getCollection("publications"))
@@ -34,10 +34,10 @@ const publications = (await getCollection("publications"))
     if (a.data.year === "2026") {
       const titleA = a.data.title.toLowerCase();
       const titleB = b.data.title.toLowerCase();
-      
-      const indexA = order2026.findIndex(prefix => titleA.includes(prefix));
-      const indexB = order2026.findIndex(prefix => titleB.includes(prefix));
-      
+
+      const indexA = order2026.findIndex((prefix) => titleA.includes(prefix));
+      const indexB = order2026.findIndex((prefix) => titleB.includes(prefix));
+
       if (indexA !== -1 && indexB !== -1) return indexA - indexB;
       if (indexA !== -1) return -1;
       if (indexB !== -1) return 1;
@@ -184,12 +184,11 @@ const researchLines = [
         class="space-y-6 max-w-4xl text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-[600]"
       >
         <p>
-          Our research focuses on human-centred visual intelligence for
-          real-world procedural activities. We study how AI systems can
-          perceive, understand, and anticipate what people are doing from
-          first-person and multi-view observations, with the goal of supporting
-          human activity through memory, skill-aware analysis, and timely
-          assistance.
+          Our research focuses on visual intelligence for Human-AI
+          collaboration. We study how AI systems can perceive, understand, and
+          anticipate what people are doing from first-person and multi-view
+          observations, with the goal of supporting human activity through
+          memory, skill-aware analysis, and timely assistance.
         </p>
         <p>We focus on the following themes:</p>
       </div>
