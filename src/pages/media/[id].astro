@@ -25,35 +25,24 @@ const {
 
 const allPublications = await getCollection("publications");
 
-// Pre-fetch logos as base64 data URIs to avoid CORS issues during PNG export
-const fetchBase64 = async (url: string, mime: string) => {
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Load logos as base64 data URIs from local public folder to avoid CORS issues during PNG export
+const getBase64Local = (relPath: string, mime: string) => {
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const buf = await res.arrayBuffer();
-    const b64 = Buffer.from(buf).toString("base64");
-    return `data:${mime};base64,${b64}`;
+    const fullPath = path.resolve('./public', relPath);
+    const buf = fs.readFileSync(fullPath);
+    return `data:${mime};base64,${buf.toString("base64")}`;
   } catch {
     return null;
   }
 };
 
-const unict_logo = await fetchBase64(
-  "https://www.brand.unict.it/img/UniCT-Logo.webp",
-  "image/webp",
-);
-const iplab_logo = await fetchBase64(
-  "https://fpv-iplab.github.io/WISH/img/iplablogo.png",
-  "image/png",
-);
-const furnari_photo = await fetchBase64(
-  "https://antoninofurnari.github.io/images/profile.jpg",
-  "image/jpeg",
-);
-const seminara_photo = await fetchBase64(
-  "https://seminaraluigi.altervista.org/assets/Me_2_quadrata.jpg",
-  "image/jpeg",
-);
+const unict_logo = getBase64Local("images/logos/UniCT-Logo.webp", "image/webp");
+const iplab_logo = getBase64Local("images/logos/iplablogo.png", "image/png");
+const furnari_photo = getBase64Local("images/team/profile.jpg", "image/jpeg");
+const seminara_photo = getBase64Local("images/team/Me_2_quadrata.jpg", "image/jpeg");
 
 // Unique dates for timeline (preserve order of first appearance)
 const allDates = papers.flatMap((p) => p.sessions.map((s) => s.date));
