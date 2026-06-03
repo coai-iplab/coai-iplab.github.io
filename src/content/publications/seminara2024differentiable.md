@@ -8,7 +8,7 @@ venue: "Advances in Neural Information Processing Systems"
 year: "2024"
 related: "seminara2026task"
 pub_type: "conference"
-award: "Highlight Top 2%; 1st Place Ego-Exo4D Procedure Understanding Challenge 2025"
+award: "EgoVis Distinguished Paper Award 2024/2025; Highlight Top 2%; 1st Place Ego-Exo4D Procedure Understanding Challenge 2025"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2406.01486.pdf"

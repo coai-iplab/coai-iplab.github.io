@@ -7,7 +7,7 @@ venue: "Conference on Computer Vision and Pattern Recognition (CVPR)"
 related: "Grauman2025"
 year: "2024"
 pub_type: "conference"
-award: "Oral Top 1%"
+award: "EgoVis Distinguished Paper Award 2024/2025; Oral Top 1%"
 links:
   - label: "PDF"
     url: "https://arxiv.org/pdf/2311.18259.pdf"
