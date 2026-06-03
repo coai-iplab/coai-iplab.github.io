@@ -5,7 +5,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 
 const publications = await getCollection("publications");
 
-const findPub = (id: string) => publications.find((p) => p.id === id);
+const findPub = (id: string) => publications.find((p) => p.id.toLowerCase() === id.toLowerCase());
 
 const egometas = findPub("santosvillafranca2026egometas");
 const egostream = findPub("forte2026egostream");
@@ -116,19 +116,28 @@ const papers = [
 
         <div class="flex flex-wrap gap-x-5 gap-y-1 text-white/70 text-sm font-[700] mb-6">
           <span>📅 June 3, 2026 · 17:00–17:30</span>
-          <span>📍 Room 108, Denver, Colorado</span>
+          <span>📍 Room 108</span>
           <span>🎤 Antonino Furnari</span>
         </div>
 
-        <p class="text-white/80 font-[600] leading-relaxed text-base mb-6">
+        <p class="text-white/80 font-[600] leading-relaxed text-base">
           This presentation outlines a framework for <strong class="text-white font-[900]">Collaborative AI</strong>, focusing on three pillars: sensing the world under physical constraints (<em>Cognitive Economy</em>), grounding perception into external structures (<em>Knowledge Grounding</em>), and providing empowering user feedback (<em>Optimal Intervention</em>).
         </p>
 
-        <div class="flex flex-wrap gap-3">
-          <a href="https://vita-workshop.github.io/" target="_blank" rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm font-[900] px-5 py-2.5 rounded-xl bg-white text-[#1b285c] hover:bg-opacity-90 hover:scale-[1.02] transition-all shadow-md">
-            VITA Workshop <ExternalLink size={14} />
-          </a>
+        <!-- Mini paper previews -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 border-t border-white/10 pt-6">
+          {papers.map((paper) => (
+            <a href={`/research/${paper.pubId}`} class="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col justify-between hover:bg-white/10 hover:border-white/20 transition-all hover:scale-[1.02] text-left group text-decoration-none">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-lg">{paper.emoji}</span>
+                  <span class="text-[9px] font-[900] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/10 text-white/80 group-hover:bg-white/20 group-hover:text-white transition-colors">View</span>
+                </div>
+                <span class="font-[900] text-xs block text-white/90 leading-tight mb-1">{paper.title}</span>
+                <span class="text-[10px] text-white/60 font-[600] line-clamp-2 leading-tight">{paper.subtitle}</span>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </div>

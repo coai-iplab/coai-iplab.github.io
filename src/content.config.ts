@@ -156,6 +156,7 @@ const mediaPresence = defineCollection({
         organizer: z.string(),
         organizerId: z.string().optional(),
       })).optional(),
+      previewUrl: z.string().optional(),
     })).optional().default([]),
     papers: z.array(z.object({
       title: z.string(),
