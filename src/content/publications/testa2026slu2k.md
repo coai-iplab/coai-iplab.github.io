@@ -4,7 +4,6 @@ authors: "Zeno Testa, Antonino Furnari, Lorenzo Baraldi, Natalia Díaz-Rodrígue
 venue: "arXiv preprint arXiv:2606.03788"
 year: "2026"
 pub_type: "preprint"
-research_line: ["datasets"]
 teaser: "/images/teasers/testa2026slu2k.png"
 links:
   - label: "arXiv"
