@@ -6,10 +6,26 @@ import { COLORS } from "../../utils/constants";
 
 export async function getStaticPaths() {
   const publications = await getCollection("publications");
-  return publications.map((pub) => ({
-    params: { id: pub.id },
-    props: { pub },
-  }));
+  const paths = [];
+  for (const pub of publications) {
+    paths.push({
+      params: { id: pub.id },
+      props: { pub },
+    });
+    if (pub.filePath) {
+      const filename = pub.filePath.split("/").pop();
+      if (filename) {
+        const casedId = filename.replace(/\.[^/.]+$/, "");
+        if (casedId && casedId !== pub.id) {
+          paths.push({
+            params: { id: casedId },
+            props: { pub },
+          });
+        }
+      }
+    }
+  }
+  return paths;
 }
 
 const { pub: rawPub } = Astro.props;
