@@ -3,7 +3,7 @@ date: "3 June 2026"
 title: "Towards Always‑On Wearable AI That Perceives, Understands, and Assists"
 venue: "VITA Workshop @ CVPR 2026"
 type: "Workshop Talk"
-slides: ""
+slides: "https://www.antoninofurnari.it/downloads/talks/vita_cvprw_3_6_26.pdf"
 upcoming: true
 speaker: "Antonino Furnari"
 speakerId: "antonino_furnari"

@@ -425,6 +425,16 @@ const otherAbstracts = extendedAbstracts.filter(
                     📄 Talk Preview
                   </a>
                 )}
+                {talk.slidesUrl && (
+                  <a
+                    href={talk.slidesUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 0.4rem;"
+                  >
+                    💾 Slides
+                  </a>
+                )}
               </div>
               {talk.type !== "Workshop Co-organization" && (
                 <svg
@@ -1422,6 +1432,16 @@ const otherAbstracts = extendedAbstracts.filter(
                           style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;"
                         >
                           📄 Talk Preview
+                        </a>
+                      )}
+                      {item.data.slidesUrl && (
+                        <a
+                          href={item.data.slidesUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 0.4rem;"
+                        >
+                          💾 Slides
                         </a>
                       )}
                     </div>
