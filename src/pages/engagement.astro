@@ -36,7 +36,7 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
     </header>
 
     <!-- Prominent link to CVPR 2026 highlights media card -->
-    <div class="relative overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-r from-[#1b285c] via-[#2a9d8f] to-[#e86f38] text-white shadow-lg hover:shadow-xl transition-all duration-300 group">
+    <a href="/media/cvpr2026" class="relative block overflow-hidden rounded-3xl p-6 md:p-8 bg-gradient-to-r from-[#1b285c] via-[#2a9d8f] to-[#e86f38] text-white shadow-lg hover:shadow-xl transition-all duration-300 group no-underline hover:text-white">
       <div class="absolute inset-0 bg-black/10 opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none"></div>
       <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-6 z-10">
         <div>
@@ -45,11 +45,11 @@ const pastTalks = engagementsWithContent.filter(t => !t.talk.data.upcoming);
             Discover our group's accepted papers, invited talks, workshop co-organizations, and full schedule inside our highlights card.
           </p>
         </div>
-        <a href="/media/cvpr2026" class="inline-flex items-center justify-center bg-white text-[#1b285c] hover:bg-opacity-90 font-[900] px-6 py-3 rounded-2xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all self-start md:self-center" style="white-space: nowrap;">
+        <div class="inline-flex items-center justify-center bg-white text-[#1b285c] group-hover:bg-opacity-90 font-[900] px-6 py-3 rounded-2xl shadow-md group-hover:shadow-lg group-hover:scale-[1.02] active:scale-95 transition-all self-start md:self-center" style="white-space: nowrap;">
           View Research Highlights <ExternalLink size={18} class="ml-2" />
-        </a>
+        </div>
       </div>
-    </div>
+    </a>
 
     {upcomingTalks.length > 0 && (
       <div class="space-y-6">

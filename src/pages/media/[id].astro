@@ -6,10 +6,33 @@ import { teamNames } from "../../utils/authors";
 
 export async function getStaticPaths() {
   const cards = await getCollection("mediaPresence");
-  return cards.map((card) => ({
-    params: { id: card.id },
-    props: { card },
-  }));
+  const paths = [];
+  for (const card of cards) {
+    paths.push({
+      params: { id: card.id },
+      props: { card },
+    });
+    if (card.filePath) {
+      const filename = card.filePath.split("/").pop();
+      if (filename) {
+        const casedId = filename.replace(/\.[^/.]+$/, "");
+        if (casedId && casedId !== card.id) {
+          paths.push({
+            params: { id: casedId },
+            props: { card },
+          });
+        }
+      }
+    }
+    const upperId = card.id.toUpperCase();
+    if (upperId !== card.id) {
+      paths.push({
+        params: { id: upperId },
+        props: { card },
+      });
+    }
+  }
+  return paths;
 }
 
 const { card } = Astro.props;
