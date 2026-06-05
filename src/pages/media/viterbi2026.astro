@@ -1,0 +1,529 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { ArrowLeft } from "lucide-react";
+import fs from "node:fs";
+import path from "node:path";
+
+// Load logos as base64 data URIs
+const getBase64Local = (relPath: string, mime: string) => {
+  try {
+    const fullPath = path.resolve("./public", relPath);
+    const buf = fs.readFileSync(fullPath);
+    return `data:${mime};base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+};
+
+const unict_logo = getBase64Local("images/logos/UniCT-Logo.webp", "image/webp");
+const iplab_logo = getBase64Local("images/logos/iplablogo.png", "image/png");
+const bath_logo = getBase64Local("images/logos/Bath-Logo.png", "image/png");
+---
+
+<Layout
+  title="ViterbiPlanNet Poster Presentation Social Card | Co-AI Research Group"
+>
+  <div
+    class="media-page"
+    style="display: flex; flex-direction: column; gap: 2rem; align-items: center; padding: 3rem 0; background-color: #f3f4f6; min-height: 100vh;"
+  >
+    <!-- Action bar (outside the card, not exported in screenshots/PDFs) -->
+    <div
+      class="action-bar"
+      style="width: 650px; align-self: center; display: flex; justify-content: space-between; align-items: center;"
+    >
+      <a href="/research/Seminara2026ViterbiPlanNet" class="back-link">
+        <ArrowLeft size={16} /> Back to Paper Page
+      </a>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         THE SOCIAL CARD (Light Theme)
+         ═══════════════════════════════════════════ -->
+    <div class="share-card" id="share-card-viterbi">
+      <!-- Corner decorations -->
+      <svg
+        class="deco deco-tl"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style="opacity:0.35;"
+      >
+        <path
+          d="M10 60 Q 30 20 60 50 Q 80 70 110 40"
+          stroke="#e86f38"
+          stroke-width="5"
+          stroke-linecap="round"
+          fill="none"></path>
+        <circle cx="20" cy="90" r="10" fill="#2a9d8f" opacity="0.8"></circle>
+        <circle cx="80" cy="100" r="6" fill="#f4a24c" opacity="0.6"></circle>
+      </svg>
+      <svg
+        class="deco deco-tr"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style="opacity:0.35;"
+      >
+        <path
+          d="M10 40 Q 40 70 70 40 Q 90 20 115 55"
+          stroke="#2a9d8f"
+          stroke-width="5"
+          stroke-linecap="round"
+          fill="none"></path>
+        <circle cx="100" cy="95" r="10" fill="#e86f38" opacity="0.7"></circle>
+      </svg>
+      <svg
+        class="deco deco-bl"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style="opacity:0.35;"
+      >
+        <path
+          d="M10 80 Q 40 50 70 80 Q 90 100 115 70"
+          stroke="#7b5b9e"
+          stroke-width="5"
+          stroke-linecap="round"
+          fill="none"></path>
+        <circle cx="25" cy="25" r="8" fill="#f4a24c" opacity="0.7"></circle>
+      </svg>
+      <svg
+        class="deco deco-br"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style="opacity:0.35;"
+      >
+        <path
+          d="M10 50 Q 40 80 70 50 Q 90 30 115 65"
+          stroke="#f4a24c"
+          stroke-width="5"
+          stroke-linecap="round"
+          fill="none"></path>
+        <circle cx="20" cy="20" r="9" fill="#2a9d8f" opacity="0.6"></circle>
+      </svg>
+
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="card-title-block">
+          <div class="card-event-line">CVPR 2026</div>
+          <div class="card-subtitle-line">
+            <span class="word-0">POSTER </span>
+            <span class="word-1">PRESENTATION</span>
+          </div>
+        </div>
+
+        <div class="header-logos">
+          {
+            unict_logo && (
+              <img
+                src={unict_logo}
+                alt="University of Catania"
+                class="hdr-logo unict"
+              />
+            )
+          }
+          {
+            bath_logo && (
+              <img
+                src={bath_logo}
+                alt="University of Bath"
+                class="hdr-logo bath"
+              />
+            )
+          }
+          {
+            iplab_logo && (
+              <img src={iplab_logo} alt="IPLAB" class="hdr-logo iplab" />
+            )
+          }
+          <div class="logo-vsep"></div>
+          <div
+            style="display: flex; flex-direction: column; align-items: center; gap: 1px;"
+          >
+            <div
+              class="co-ai-logo"
+              style="font-family: 'Nunito', sans-serif; font-weight:900; font-size:2rem; letter-spacing:-0.02em; display:inline-flex; align-items:center;"
+            >
+              <span style="color:#1b285c">C</span>
+              <span style="color:#2a9d8f">o</span>
+              <span
+                style="color:#8ab07d; margin:0 4px; transform:scaleY(0.8); display:inline-block"
+                >-</span
+              >
+              <span
+                style="background:linear-gradient(to right,#7b5b9e 55%,#e86f38 45%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block"
+                >A</span
+              >
+              <span style="color:#f4a24c;margin-left:2px">I</span>
+            </div>
+            <a
+              href="https://coai-iplab.github.io"
+              target="_blank"
+              rel="noopener"
+              style="font-size: 0.55rem; font-weight: 800; color: #6b7280; text-decoration: none; letter-spacing: 0.02em; line-height: 1; margin-top: -4px;"
+            >
+              coai-iplab.github.io
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Poster Schedule Card -->
+      <div class="schedule-card">
+        <span class="type-pill orange-bg">CVPR 2026 Denver</span>
+        <h2 class="schedule-title">
+          ViterbiPlanNet: Injecting Procedural Knowledge via Differentiable
+          Viterbi for Planning in Instructional Videos
+        </h2>
+        <p class="authors-line">
+          Luigi Seminara, Davide Moltisanti, Antonino Furnari · <a
+            href="https://github.com/Gigi-G/ViterbiPlanNet"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-url">https://github.com/Gigi-G/ViterbiPlanNet</a
+          >
+        </p>
+
+        <div class="pills-container">
+          <span class="pill highlight-pill">🏆 Highlight (Top 14%)</span>
+          <span class="pill date-pill">📅 June 7, 2026</span>
+          <span class="pill time-pill">⏰ 11:45 – 13:45</span>
+          <span class="pill room-pill">📍 Exhibit Hall</span>
+        </div>
+
+        <!-- Research Highlights / Summaries (as separate cards) -->
+        <div class="summary-cards-container">
+          <div class="insight-card focus-card">
+            <span class="insight-tag focus-tag">Focus</span>
+            <p class="insight-text">
+              Using procedural graphs as cognitive support to inject knowledge
+              into the learning process via a Differentiable Viterbi Layer.
+            </p>
+          </div>
+
+          <div class="insight-card overview-card">
+            <span class="insight-tag overview-tag">Overview</span>
+            <p class="insight-text">
+              This method addresses cognitive offloading by allowing base models
+              to rely on structured graphs rather than memorizing full
+              procedures.
+            </p>
+          </div>
+
+          <div class="insight-card finding-card">
+            <span class="insight-tag finding-tag">Key Finding</span>
+            <p class="insight-text finding-text">
+              SOTA success rates with an order of magnitude fewer parameters
+              (5.58M), strong sample efficiency, and cross-horizon
+              generalization.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .media-page {
+      font-family: "Nunito", sans-serif;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: #1b285c;
+    }
+
+    /* Card shell - Light Theme */
+    .share-card {
+      position: relative;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+      width: 650px;
+      height: auto;
+      padding: 2rem 2.2rem 1.5rem;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* Corner decorations */
+    .deco {
+      position: absolute;
+      width: 130px;
+      pointer-events: none;
+    }
+    .deco-tl {
+      top: -10px;
+      left: -10px;
+    }
+    .deco-tr {
+      top: -10px;
+      right: -10px;
+      transform: scaleX(-1);
+    }
+    .deco-bl {
+      bottom: -10px;
+      left: -10px;
+      transform: scaleY(-1);
+    }
+    .deco-br {
+      bottom: -10px;
+      right: -10px;
+      transform: scale(-1);
+    }
+
+    /* Header */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+    .card-event-line {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #1b285c;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    .card-subtitle-line {
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    .word-0 {
+      color: #1b285c;
+    }
+    .word-1 {
+      background: linear-gradient(90deg, #e86f38, #2a9d8f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Co-AI logo */
+    .co-ai-logo {
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Header logos group */
+    .header-logos {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+    .hdr-logo {
+      height: 1.8rem;
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .logo-vsep {
+      width: 1px;
+      height: 1.8rem;
+      background: #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    /* Schedule card */
+    .schedule-card {
+      background: #fff4ec;
+      border-radius: 20px;
+      padding: 1.25rem;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 1rem;
+    }
+    .schedule-title {
+      font-weight: 950;
+      color: #1b285c;
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+      margin: 0 0 0.2rem;
+      text-align: left;
+      font-size: 1.05rem;
+    }
+    .authors-line {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #4b5563;
+      margin-top: 0rem;
+      margin-bottom: 0.95rem;
+    }
+
+    .project-url {
+      color: #2a9d8f;
+      text-decoration: underline;
+      text-underline-offset: 1px;
+      word-break: break-all;
+    }
+
+    .type-pill {
+      display: inline-block;
+      font-size: 0.55rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 0.35rem;
+    }
+    .orange-bg {
+      background: #e86f38;
+      color: #fff;
+    }
+
+    .pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 0.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .highlight-pill {
+      background: #f4a24c;
+      color: #fff;
+    }
+    .date-pill {
+      background: #7b5b9e;
+      color: #fff;
+    }
+    .time-pill {
+      background: #e86f38;
+      color: #fff;
+    }
+    .room-pill {
+      background: #2a9d8f;
+      color: #fff;
+    }
+
+    /* Research Highlights / Summaries (as separate cards) */
+    .summary-cards-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    .insight-card {
+      border-radius: 12px;
+      padding: 0.75rem 0.95rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .focus-card,
+    .overview-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    .finding-card {
+      background: #fffbf9;
+      border: 1px solid #ffd8c7;
+    }
+
+    .insight-tag {
+      font-size: 0.55rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .focus-tag {
+      color: #2a9d8f;
+    }
+    .overview-tag {
+      color: #7b5b9e;
+    }
+    .finding-tag {
+      color: #e86f38;
+    }
+
+    .insight-text {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #334155;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .finding-text {
+      font-weight: 800;
+      color: #1b285c;
+    }
+
+    /* Print optimizations */
+    @media print {
+      body,
+      html {
+        background: #fff !important;
+      }
+      .media-page > .action-bar,
+      .media-page > :not(.share-card) {
+        display: none !important;
+      }
+      .media-page,
+      .share-card {
+        box-shadow: none !important;
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+      }
+      .deco {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .share-card {
+        width: 100% !important;
+        padding: 1.5rem 1.2rem;
+      }
+      .summary-cards-container {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</Layout>
