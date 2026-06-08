@@ -66,6 +66,7 @@ const papers = [
     theme: "Knowledge Grounding",
     themeIcon: "🔗",
     award: "CVPR 2026 Highlight · Top 14%",
+    efficiencyBadge: "CVPR 2026 Efficient Badge",
   },
   {
     emoji: "🛠️",
@@ -199,6 +200,11 @@ const papers = [
                 {paper.award && (
                   <span class="text-xs font-[900] uppercase tracking-widest px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30">
                     🏆 {paper.award}
+                  </span>
+                )}
+                {paper.efficiencyBadge && (
+                  <span class="text-xs font-[900] uppercase tracking-widest px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30">
+                    ✅ {paper.efficiencyBadge}
                   </span>
                 )}
               </div>

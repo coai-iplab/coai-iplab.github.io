@@ -12,9 +12,87 @@ const newsItems = await Promise.all(
   })
 );
 
+const MONTHS: Record<string, number> = {
+  january: 0,
+  jan: 0,
+  february: 1,
+  feb: 1,
+  march: 2,
+  mar: 2,
+  april: 3,
+  apr: 3,
+  may: 4,
+  june: 5,
+  jun: 5,
+  july: 6,
+  jul: 6,
+  august: 7,
+  aug: 7,
+  september: 8,
+  sept: 8,
+  sep: 8,
+  october: 9,
+  oct: 9,
+  november: 10,
+  nov: 10,
+  december: 11,
+  dec: 11,
+};
+
+const normalizeMonth = (month: string) => month.toLowerCase().replace(/\./g, '');
+
+const toMidnight = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+const parseEngagementDate = (raw: string): Date | null => {
+  const dateStr = raw.trim().replace(/,/g, '');
+
+  // Handles ranges like "3-7 June 2026" using the end date.
+  const rangeMatch = dateStr.match(/^(\d{1,2})-(\d{1,2})\s+([A-Za-z.]+)\s+(\d{4})$/);
+  if (rangeMatch) {
+    const endDay = Number(rangeMatch[2]);
+    const month = MONTHS[normalizeMonth(rangeMatch[3])];
+    const year = Number(rangeMatch[4]);
+    if (!Number.isNaN(endDay) && month !== undefined && !Number.isNaN(year)) {
+      return new Date(year, month, endDay);
+    }
+  }
+
+  // Handles day-first dates like "3 June 2026".
+  const dayFirstMatch = dateStr.match(/^(\d{1,2})\s+([A-Za-z.]+)\s+(\d{4})$/);
+  if (dayFirstMatch) {
+    const day = Number(dayFirstMatch[1]);
+    const month = MONTHS[normalizeMonth(dayFirstMatch[2])];
+    const year = Number(dayFirstMatch[3]);
+    if (!Number.isNaN(day) && month !== undefined && !Number.isNaN(year)) {
+      return new Date(year, month, day);
+    }
+  }
+
+  // Handles month-first dates like "June 3 2026".
+  const monthFirstMatch = dateStr.match(/^([A-Za-z.]+)\s+(\d{1,2})\s+(\d{4})$/);
+  if (monthFirstMatch) {
+    const month = MONTHS[normalizeMonth(monthFirstMatch[1])];
+    const day = Number(monthFirstMatch[2]);
+    const year = Number(monthFirstMatch[3]);
+    if (month !== undefined && !Number.isNaN(day) && !Number.isNaN(year)) {
+      return new Date(year, month, day);
+    }
+  }
+
+  const fallback = new Date(dateStr);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+};
+
+const today = toMidnight(new Date());
+
 const allEngagements = await getCollection('engagements');
 const upcomingEngagements = allEngagements
-  .filter(e => e.data.upcoming)
+  .filter((e) => {
+    if (!e.data.upcoming) return false;
+    const parsedDate = parseEngagementDate(e.data.date);
+    if (!parsedDate) return false;
+    return toMidnight(parsedDate).getTime() >= today.getTime();
+  })
   .sort((a, b) => {
     const numA = parseInt(a.id.replace('talk-', ''));
     const numB = parseInt(b.id.replace('talk-', ''));
