@@ -1,9 +1,9 @@
 ---
 title: "EGOSTREAM: A Diagnostic Benchmark for Streaming Episodic Memory in Egocentric Vision"
 authors: "Rosario Forte, Giuseppe Lando, Antonino Furnari"
-venue: "arXiv preprint arXiv:2605.31557"
+venue: "Advances in Neural Information Processing Systems (NeurIPS)"
 year: "2026"
-pub_type: "preprint"
+pub_type: "conference"
 research_line: "memory"
 teaser: "/images/teasers/forte2026egostream.png"
 links:
@@ -14,10 +14,10 @@ links:
   - label: "Website"
     url: "https://saroo25.github.io/Egostream/"
 bibtex: |
-  @article{forte2026egostream,
+  @inproceedings{forte2026egostream,
     title={EGOSTREAM: A Diagnostic Benchmark for Streaming Episodic Memory in Egocentric Vision},
     author={Forte, Rosario and Lando, Giuseppe and Furnari, Antonino},
-    journal={arXiv preprint arXiv:2605.31557},
+    booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
     year={2026}
   }
 active: true

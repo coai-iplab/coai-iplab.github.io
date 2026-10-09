@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { ArrowLeft, Download } from "lucide-react";
 import { teamNames } from "../../utils/authors";
+import { withBase } from "../../lib/url";
 
 export async function getStaticPaths() {
   const cards = await getCollection("mediaPresence");
@@ -119,7 +120,7 @@ const otherAbstracts = extendedAbstracts.filter(
   >
     <!-- Action bar (outside the card, not exported in PNG) -->
     <div class="action-bar" style="width: 650px; align-self: center;">
-      <a href="/engagement" class="back-link">
+      <a href={withBase("/engagement")} class="back-link">
         <ArrowLeft size={16} /> Back to Public Engagement
       </a>
     </div>
@@ -366,7 +367,7 @@ const otherAbstracts = extendedAbstracts.filter(
                     return (
                       <span key={pid}>
                         <a
-                          href={`/team/${pid}`}
+                          href={withBase(`/team/${pid}`)}
                           class={`presenter-link ${isTarget ? "underline" : ""}`}
                         >
                           {name}
@@ -425,7 +426,7 @@ const otherAbstracts = extendedAbstracts.filter(
                           <span class="challenge-sep"> - </span>
                           {ch.organizerId ? (
                             <a
-                              href={`/team/${ch.organizerId}`}
+                              href={withBase(`/team/${ch.organizerId}`)}
                               class="challenge-organizer"
                             >
                               {ch.organizer}
@@ -442,7 +443,7 @@ const otherAbstracts = extendedAbstracts.filter(
                 )}
                 {talk.previewUrl && (
                   <a
-                    href={talk.previewUrl}
+                    href={withBase(talk.previewUrl)}
                     style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;"
                   >
                     📄 Talk Preview
@@ -450,7 +451,7 @@ const otherAbstracts = extendedAbstracts.filter(
                 )}
                 {talk.slidesUrl && (
                   <a
-                    href={talk.slidesUrl}
+                    href={withBase(talk.slidesUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 0.4rem;"
@@ -952,7 +953,7 @@ const otherAbstracts = extendedAbstracts.filter(
                               <span key={i}>
                                 {id ? (
                                   <a
-                                    href={`/team/${id}`}
+                                    href={withBase(`/team/${id}`)}
                                     class={`presenter-link ${isTarget ? "underline" : ""}`}
                                   >
                                     {name}
@@ -1241,7 +1242,7 @@ const otherAbstracts = extendedAbstracts.filter(
                           return (
                             <span key={pid}>
                               <a
-                                href={`/team/${pid}`}
+                                href={withBase(`/team/${pid}`)}
                                 class={`presenter-link ${isTarget ? "underline" : ""}`}
                               >
                                 {name}
@@ -1313,7 +1314,7 @@ const otherAbstracts = extendedAbstracts.filter(
                                 <span class="challenge-sep"> - </span>
                                 {ch.organizerId ? (
                                   <a
-                                    href={`/team/${ch.organizerId}`}
+                                    href={withBase(`/team/${ch.organizerId}`)}
                                     class="challenge-organizer"
                                   >
                                     {ch.organizer}
@@ -1367,7 +1368,7 @@ const otherAbstracts = extendedAbstracts.filter(
                           return (
                             <span key={pid}>
                               <a
-                                href={`/team/${pid}`}
+                                href={withBase(`/team/${pid}`)}
                                 class={`presenter-link ${isTarget ? "underline" : ""}`}
                               >
                                 {name}
@@ -1434,7 +1435,7 @@ const otherAbstracts = extendedAbstracts.filter(
                                   <span class="challenge-sep"> - </span>
                                   {ch.organizerId ? (
                                     <a
-                                      href={`/team/${ch.organizerId}`}
+                                      href={withBase(`/team/${ch.organizerId}`)}
                                       class="challenge-organizer"
                                     >
                                       {ch.organizer}
@@ -1451,7 +1452,7 @@ const otherAbstracts = extendedAbstracts.filter(
                         )}
                       {item.data.previewUrl && (
                         <a
-                          href={item.data.previewUrl}
+                          href={withBase(item.data.previewUrl)}
                           style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;"
                         >
                           📄 Talk Preview
@@ -1459,7 +1460,7 @@ const otherAbstracts = extendedAbstracts.filter(
                       )}
                       {item.data.slidesUrl && (
                         <a
-                          href={item.data.slidesUrl}
+                          href={withBase(item.data.slidesUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
                           style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.6rem; font-size: 0.6rem; font-weight: 900; color: #1b285c; background: #1b285c15; border: 1px solid #1b285c40; padding: 0.25rem 0.7rem; border-radius: 999px; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 0.4rem;"
@@ -1699,7 +1700,7 @@ const otherAbstracts = extendedAbstracts.filter(
                                       <span>
                                         {id ? (
                                           <a
-                                            href={`/team/${id}`}
+                                            href={withBase(`/team/${id}`)}
                                             style="color: inherit; text-decoration: underline;"
                                             class={
                                               isTarget

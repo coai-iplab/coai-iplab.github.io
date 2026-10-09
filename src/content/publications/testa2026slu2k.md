@@ -1,9 +1,9 @@
 ---
 title: "SLU-2K: A Question-Based Benchmark for Semantic Evaluation of Sign Language Translation"
 authors: "Zeno Testa, Antonino Furnari, Lorenzo Baraldi, Natalia Díaz-Rodríguez"
-venue: "arXiv preprint arXiv:2606.03788"
+venue: "ACVR Workshop @ ECCV 2026"
 year: "2026"
-pub_type: "preprint"
+pub_type: "workshop"
 teaser: "/images/teasers/testa2026slu2k.png"
 links:
   - label: "arXiv"
@@ -13,12 +13,12 @@ links:
   - label: "Code"
     url: "https://github.com/ZenoTsT/SLU-2K"
 bibtex: |
-  @article{testa2026slu2k,
+  @inproceedings{testa2026slu2k,
     title={SLU-2K: A Question-Based Benchmark for Semantic Evaluation of Sign Language Translation},
     author={Testa, Zeno and Furnari, Antonino and Baraldi, Lorenzo and D\'iaz-Rodr\'iguez, Natalia},
-    journal={arXiv preprint arXiv:2606.03788},
+    booktitle={Workshop on Assistive Computer Vision and Robotics (ACVR) in conjunction with ECCV, Malmo, Sweden, September 8},
     year={2026},
-    arxiv={2606.03788}
+    url={https://arxiv.org/abs/2606.03788}
   }
 active: true
 ---

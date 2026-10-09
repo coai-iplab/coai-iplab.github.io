@@ -1,6 +1,6 @@
 ---
 name: "María Santos Villafranca"
-role: "Past Visitor"
+role: "Visiting PhD Student"
 affiliation: "University of Zaragoza"
 category: "Past Visitors"
 years: "Sept 2025 - Dec 2025"

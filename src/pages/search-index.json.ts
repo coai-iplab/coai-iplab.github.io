@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { withBase } from '../lib/url';
 
 export async function GET() {
   const searchIndex: any[] = [];
@@ -10,7 +11,7 @@ export async function GET() {
       title: member.data.name,
       subtitle: `${member.data.role} • ${member.data.affiliation}`,
       type: 'People',
-      url: `/team/${member.id}`,
+      url: withBase(`/team/${member.id}`),
       content: `${member.data.name} ${member.data.role} ${member.data.affiliation} ${member.body || ''} ${member.data.notes || ''}`.trim(),
     });
   });
@@ -22,7 +23,7 @@ export async function GET() {
       title: pub.data.title,
       subtitle: `${pub.data.authors} (${pub.data.year}) — ${pub.data.venue}`,
       type: 'Publications',
-      url: `/research/${pub.id}`,
+      url: withBase(`/research/${pub.id}`),
       content: `${pub.data.title} ${pub.data.authors} ${pub.data.venue} ${pub.data.year} ${pub.body || ''} ${pub.data.teaser || ''} ${pub.data.award || ''}`.trim(),
     });
   });
@@ -34,7 +35,7 @@ export async function GET() {
       title: project.data.title,
       subtitle: `${project.data.role} • ${project.data.funding} (${project.data.period})`,
       type: 'Projects',
-      url: '/projects',
+      url: withBase('/projects'),
       content: `${project.data.title} ${project.data.role} ${project.data.funding} ${project.data.period} ${project.data.description || ''} ${project.data.partners || ''}`.trim(),
     });
   });
@@ -46,7 +47,7 @@ export async function GET() {
       title: n.data.title,
       subtitle: `${n.data.type} • ${n.data.date}`,
       type: 'News',
-      url: '/',
+      url: withBase('/'),
       content: `${n.data.title} ${n.data.type} ${n.data.date} ${n.body || ''}`.trim(),
     });
   });
@@ -58,7 +59,7 @@ export async function GET() {
       title: e.data.title,
       subtitle: `${e.data.type} • ${e.data.speaker} • ${e.data.venue} (${e.data.date})`,
       type: 'Public Engagement',
-      url: '/engagement',
+      url: withBase('/engagement'),
       content: `${e.data.title} ${e.data.type} ${e.data.speaker} ${e.data.venue} ${e.data.date} ${e.body || ''}`.trim(),
     });
   });

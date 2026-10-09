@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { ArrowLeft } from "lucide-react";
+import { withBase } from "../../lib/url";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -32,7 +33,7 @@ const bath_logo = getBase64Local("images/logos/Bath-Logo.png", "image/png");
       class="action-bar"
       style="width: 650px; align-self: center; display: flex; justify-content: space-between; align-items: center;"
     >
-      <a href="/research/Seminara2026ViterbiPlanNet" class="back-link">
+      <a href={withBase("/research/Seminara2026ViterbiPlanNet")} class="back-link">
         <ArrowLeft size={16} /> Back to Paper Page
       </a>
     </div>

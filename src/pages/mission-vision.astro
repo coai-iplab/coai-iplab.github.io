@@ -3,6 +3,7 @@ import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { Users, Eye, Shield, Sparkles, Brain, Code } from 'lucide-react';
 import { COLORS } from '../utils/constants';
+import { withBase } from '../lib/url';
 
 const mvEntry = await getEntry('missionVision', 'index');
 const mvData = mvEntry ? mvEntry.data : {
@@ -38,7 +39,7 @@ const mvData = mvEntry ? mvEntry.data : {
         <p class="text-gray-600 dark:text-gray-350 font-[600] leading-relaxed text-lg" set:html={mvData.whoWeAre}>
         </p>
         <div class="pt-2">
-          <a href="/team" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+          <a href={withBase("/team")} class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
             Meet the Team Members &rarr;
           </a>
         </div>
@@ -67,7 +68,7 @@ const mvData = mvEntry ? mvEntry.data : {
         <p class="text-gray-600 dark:text-gray-350 font-[600] leading-relaxed text-lg" set:html={mvData.visionResearch}>
         </p>
         <div class="pt-2">
-          <a href="/research" class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
+          <a href={withBase("/research")} class="inline-flex items-center justify-center px-6 py-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 rounded-2xl font-[900] transition-all gap-2 text-sm shadow-sm">
             Explore Our Research &rarr;
           </a>
         </div>

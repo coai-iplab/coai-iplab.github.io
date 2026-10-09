@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { ExternalLink, ChevronRight } from "lucide-react";
 import { COLORS } from "../utils/constants";
+import { withBase } from "../lib/url";
 
 const order2026 = [
   "egostream",
@@ -120,7 +121,7 @@ const getPrimaryLink = (pub: any) => {
 const getTeaserUrl = (teaser?: string) => {
   if (!teaser) return undefined;
   if (teaser.startsWith("http")) return teaser;
-  return teaser;
+  return withBase(teaser);
 };
 ---
 
@@ -173,7 +174,7 @@ const getTeaserUrl = (teaser?: string) => {
                             ))}
                       </div>
                       <a
-                        href={`/research/${pub.id}`}
+                        href={withBase(`/research/${pub.id}`)}
                         class="text-2xl font-[900] text-gray-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors block mb-3 leading-tight tracking-tight"
                       >
                         {pub.data.title}
@@ -187,7 +188,7 @@ const getTeaserUrl = (teaser?: string) => {
                                   href={
                                     author.id === "davide_moltisanti"
                                       ? "https://www.davidemoltisanti.com/research/"
-                                      : `/team/${author.id}`
+                                      : withBase(`/team/${author.id}`)
                                   }
                                   class={
                                     author.id === "davide_moltisanti"
@@ -300,7 +301,7 @@ const getTeaserUrl = (teaser?: string) => {
                                   </span>
                                 </div>
                                 <a
-                                  href={`/research/${relatedEntry.id}`}
+                                  href={withBase(`/research/${relatedEntry.id}`)}
                                   class="text-sm font-[900] text-gray-800 dark:text-gray-200 hover:text-blue-700 dark:hover:text-blue-400 transition-colors block leading-snug"
                                 >
                                   {relatedEntry.data.title}
@@ -330,7 +331,7 @@ const getTeaserUrl = (teaser?: string) => {
                         })()}
                     </div>
                     <a
-                      href={`/research/${pub.id}`}
+                      href={withBase(`/research/${pub.id}`)}
                       class="text-gray-300 hover:text-gray-900 dark:text-gray-600 dark:hover:text-white self-start md:self-center p-2 hidden md:block transition-colors"
                     >
                       <ChevronRight size={32} />

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { GraduationCap, ExternalLink, UserCircle } from 'lucide-react';
 import { COLORS } from '../utils/constants';
+import { withBase } from '../lib/url';
 
 const allTeam = await getCollection('team');
 const teamMembers = allTeam.filter(m => !m.data.alumni && m.data.category !== 'Past Visitors');
@@ -36,7 +37,7 @@ const alumniMembers = allTeam
 
 const pastVisitors = allTeam.filter(m => m.data.category === 'Past Visitors');
 
-const categories = ['Principal Investigator', 'PhD Students', 'Bachelor Students', 'Collaborators'];
+const categories = ['Principal Investigator', 'PhD Students', 'Master Students', 'Bachelor Students', 'Collaborators'];
 
 const getAvatar = (seed: string, colorHex: string) => `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${colorHex.replace('#', '')}`;
 ---
@@ -65,16 +66,16 @@ const getAvatar = (seed: string, colorHex: string) => `https://api.dicebear.com/
                 <div class="h-32 w-full" style={`background: ${category === 'Principal Investigator' ? `linear-gradient(135deg, ${COLORS.navy}, ${COLORS.teal})` : `linear-gradient(135deg, #f3f4f6, #e5e7eb)`};`}></div>
                 <div class="px-8 pb-8">
                   <div class="relative flex justify-between items-end -mt-16 mb-6">
-                    <a href={`/team/${member.id}`} class="w-28 h-28 bg-white dark:bg-gray-850 rounded-3xl p-1.5 shadow-lg block hover:ring-4 hover:ring-blue-100 transition-all duration-200">
-                      <img 
-                        src={member.data.profile || member.data.image || getAvatar(member.data.name, member.data.color)} 
-                        alt={member.data.name} 
+                    <a href={withBase(`/team/${member.id}`)} class="w-28 h-28 bg-white dark:bg-gray-850 rounded-3xl p-1.5 shadow-lg block hover:ring-4 hover:ring-blue-100 transition-all duration-200">
+                      <img
+                        src={withBase(member.data.profile || member.data.image || getAvatar(member.data.name, member.data.color))}
+                        alt={member.data.name}
                         class="w-full h-full rounded-2xl object-cover bg-gray-50 dark:bg-gray-800"
                       />
                     </a>
                   </div>
                   <h3 class="text-2xl font-[900] text-gray-900 dark:text-white mb-1 tracking-tight leading-tight hover:text-blue-600 transition-colors">
-                    <a href={`/team/${member.id}`}>{member.data.name}</a>
+                    <a href={withBase(`/team/${member.id}`)}>{member.data.name}</a>
                   </h3>
                   <p class="font-[900] text-sm mb-4 uppercase tracking-wider" style={`color: ${category === 'Principal Investigator' ? COLORS.teal : COLORS.orangeDark};`}>{member.data.role}</p>
                   <div class="flex flex-col gap-2 text-gray-500 dark:text-gray-400 mb-6 text-sm font-[800]">
@@ -84,7 +85,7 @@ const getAvatar = (seed: string, colorHex: string) => `https://api.dicebear.com/
                     {member.body}
                   </p>
                   <div class="flex flex-wrap gap-2">
-                    <a href={`/team/${member.id}`} class="inline-flex items-center text-sm font-[900] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-colors">
+                    <a href={withBase(`/team/${member.id}`)} class="inline-flex items-center text-sm font-[900] text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-colors">
                       View Profile <UserCircle size={16} class="ml-2" />
                     </a>
                     {member.data.link !== '#' && (

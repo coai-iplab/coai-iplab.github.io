@@ -1,9 +1,9 @@
 ---
 title: "RECIPE: Procedural Planning via Grounding in Instructional Video"
 authors: "Luigi Seminara, Antonino Furnari, Lorenzo Torresani"
-venue: "arXiv preprint arXiv:2605.19976"
+venue: "Advances in Neural Information Processing Systems (NeurIPS)"
 year: "2026"
-pub_type: "preprint"
+pub_type: "conference"
 research_line: "skill"
 teaser: "/images/teasers/seminara2026recipe.svg"
 links:
@@ -14,10 +14,10 @@ links:
   - label: "Website"
     url: "https://farsightlab.github.io/RECIPE/"
 bibtex: |
-  @article{seminara2026recipe,
+  @inproceedings{seminara2026recipe,
     title={RECIPE: Procedural Planning via Grounding in Instructional Video},
     author={Seminara, Luigi and Furnari, Antonino and Torresani, Lorenzo},
-    journal={arXiv preprint arXiv:2605.19976},
+    booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
     year={2026}
   }
 active: true

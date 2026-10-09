@@ -1,28 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Cpu, BrainCircuit, FileText, Megaphone, Calendar, Users, Camera, UserPlus, Compass, Briefcase, Search } from 'lucide-react';
 import SearchModal from './SearchModal';
-
-const COLORS = {
-  navy: '#1b285c',
-  teal: '#2a9d8f',
-  sage: '#8ab07d',
-  purple: '#7b5b9e',
-  orangeDark: '#e86f38',
-  orangeLight: '#f4a24c',
-};
+import { withBase } from '../../lib/url';
 
 const CoAILogo = () => (
-  <a href="/" className="flex items-center font-[900] text-5xl tracking-tight select-none cursor-pointer" style={{ fontFamily: "'Nunito', sans-serif" }}>
-    <span style={{ color: COLORS.navy }}>C</span>
-    <span style={{ color: COLORS.teal }}>o</span>
-    <span style={{ color: COLORS.sage, margin: '0 4px', transform: 'scaleY(0.8)' }}>-</span>
-    <span style={{ 
-      background: `linear-gradient(to right, ${COLORS.purple} 55%, ${COLORS.orangeDark} 45%)`,
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      display: 'inline-block'
-    }}>A</span>
-    <span style={{ color: COLORS.orangeLight, marginLeft: '2px' }}>I</span>
+  <a href={withBase('/')} className="flex items-center cursor-pointer">
+    <img src={withBase('/images/logos/coai-logo.png')} alt="Co-AI Research Group" className="h-10 md:h-12 w-auto" />
   </a>
 );
 
@@ -57,7 +40,12 @@ export default function Navigation({ currentPath }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const isActive = (path) => currentPath === path || currentPath === path + '/';
+  const base = import.meta.env.BASE_URL;
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const relativePath = currentPath.startsWith(normalizedBase)
+    ? currentPath.slice(normalizedBase.length) || '/'
+    : currentPath;
+  const isActive = (path) => relativePath === path || relativePath === path + '/';
 
   return (
     <>
@@ -126,7 +114,7 @@ export default function Navigation({ currentPath }) {
             return (
               <a
                 key={item.id}
-                href={item.id}
+                href={withBase(item.id)}
                 className={`w-full flex items-center space-x-4 px-6 py-3.5 rounded-3xl transition-all duration-200 text-left font-[800] text-[15px] ${
                   active 
                     ? 'bg-gray-900 dark:bg-gray-800 text-white shadow-lg transform scale-[1.02]' 
@@ -141,7 +129,7 @@ export default function Navigation({ currentPath }) {
 
           <div className="pt-6 mt-6 border-t border-gray-100 dark:border-gray-850">
              <a
-                href="/contact"
+                href={withBase('/contact')}
                 className={`w-full flex flex-col items-start p-6 rounded-3xl transition-all duration-200 text-left ${
                   isActive('/contact')
                     ? 'bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-200 dark:border-blue-900/30 scale-[1.02] shadow-sm' 

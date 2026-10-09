@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Users, FileText, Briefcase, Megaphone, Calendar, CornerDownLeft } from 'lucide-react';
+import { withBase } from '../../lib/url';
 
 interface SearchItem {
   title: string;
@@ -25,7 +26,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   // Fetch search index when modal is opened
   useEffect(() => {
     if (isOpen) {
-      fetch('/search-index.json')
+      fetch(withBase('/search-index.json'))
         .then((res) => res.json())
         .then((data) => setIndex(data))
         .catch((err) => console.error('Failed to load search index', err));
