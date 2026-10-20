@@ -23,6 +23,13 @@ const getEndYear = (member: any) => {
   return Math.max(...matches);
 };
 
+const getStartYear = (member: any) => {
+  const text = `${member.data.years || ''} ${member.data.notes || ''}`;
+  const matches = Array.from(text.matchAll(/\b(20\d{2})\b/g)).map(m => parseInt(m[1]));
+  if (matches.length === 0) return 0;
+  return Math.min(...matches);
+};
+
 const alumniMembers = allTeam
   .filter(m => m.data.alumni && m.data.category !== 'Past Visitors')
   .sort((a, b) => {
@@ -32,7 +39,8 @@ const alumniMembers = allTeam
 
     const yearA = getEndYear(a);
     const yearB = getEndYear(b);
-    return yearB - yearA;
+    if (yearA !== yearB) return yearB - yearA;
+    return getStartYear(a) - getStartYear(b);
   });
 
 const pastVisitors = allTeam.filter(m => m.data.category === 'Past Visitors');
