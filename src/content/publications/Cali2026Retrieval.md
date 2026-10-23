@@ -6,6 +6,10 @@ year: "2026"
 pub_type: "conference"
 research_line: "memory"
 links:
+  - label: "arXiv"
+    url: "https://arxiv.org/abs/2610.31284"
+  - label: "PDF"
+    url: "https://arxiv.org/pdf/2610.31284"
   - label: "Conference"
     url: "https://cbmi2026.sciencesconf.org"
 bibtex: |
